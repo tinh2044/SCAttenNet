@@ -187,10 +187,16 @@ class RecognitionNetwork(nn.Module):
         self.cfg = cfg
         self.cross_distillation = cfg['cross_distillation']
         
+        # self.joint_idx = cfg['body_idx'] + cfg['left_idx'] + cfg['right_idx']
+        # self.keypoint_encoder = KeypointModule(self.joint_idx, num_frame=cfg['num_frame'], 
+        #                                        nets=cfg['nets'], dropout=0.1)
+        
+        # self.visual_head = VisualHead(**cfg['visual_head'], cls_num=len(gloss_tokenizer))
+        
         self.body_encoder = KeypointModule(cfg['body_idx'], num_frame=cfg['num_frame'], nets=cfg['nets'])
         self.left_encoder = KeypointModule(cfg['left_idx'], num_frame=cfg['num_frame'], nets=cfg['nets'])
         self.right_encoder = KeypointModule(cfg['right_idx'], num_frame=cfg['num_frame'], nets=cfg['nets'])
-        self.face_encoder = KeypointModule(cfg['face_idx'], num_frame=cfg['num_frame'], nets=cfg['nets'])
+        # self.face_encoder = KeypointModule(cfg['face_idx'], num_frame=cfg['num_frame'], nets=cfg['nets'])
         
         self.left_visual_head = VisualHead(**cfg['left_visual_head'], cls_num=len(gloss_tokenizer))
         self.right_visual_head = VisualHead(**cfg['right_visual_head'], cls_num=len(gloss_tokenizer))
@@ -209,15 +215,15 @@ class RecognitionNetwork(nn.Module):
         (_, body_embed), (_, _) = self.body_encoder(keypoints[:, :, :, self.cfg['body_idx']])
         (_, left_embed), (_, _) = self.left_encoder(keypoints[:, :, :, self.cfg['left_idx']])
         (_, right_embed), (_, _) = self.right_encoder(keypoints[:, :, :, self.cfg['right_idx']])
-        (_, face_embed), (_, _) = self.face_encoder(keypoints[:, :, :, self.cfg['face_idx']])
+        # (_, face_embed), (_, _) = self.face_encoder(keypoints[:, :, :, self.cfg['face_idx']])
         
         body_embed = body_embed.mean(dim=-1).permute(0, 2, 1)
         left_embed = left_embed.mean(dim=-1).permute(0, 2, 1)
         right_embed = right_embed.mean(dim=-1).permute(0, 2, 1)
-        face_embed = face_embed.mean(dim=-1).permute(0, 2, 1)
+        # face_embed = face_embed.mean(dim=-1).permute(0, 2, 1)
         
         
-        fuse_output = torch.cat([left_embed, right_embed, body_embed, face_embed], dim=-1)
+        fuse_output = torch.cat([left_embed, right_embed, body_embed], dim=-1)
        
         left_output = torch.cat([left_embed, body_embed], dim=-1)
         right_output = torch.cat([right_embed, body_embed], dim=-1)
