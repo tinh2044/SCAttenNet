@@ -89,9 +89,8 @@ class SLR_Dataset(Dataset.Dataset):
 
         gloss_output = self.gloss_tokenizer.batch_encode(gloss_batch, return_length=True)
         
-        new_src_lengths = (((length_keypoints_batch - 1) / 2)).long()
-        new_src_lengths = (((new_src_lengths - 1) / 2)).long()
-        
+        new_src_lengths = (((length_keypoints_batch - 1) / 2) + 1).long()
+        new_src_lengths = (((new_src_lengths - 1) / 2) + 1).long()
         mask_head = torch.torch.zeros((keypoints_batch.shape[0], max(new_src_lengths)), dtype=torch.long)
         for i in range(keypoints_batch.shape[0]):
             mask_head[i, :new_src_lengths[i]] = 1
