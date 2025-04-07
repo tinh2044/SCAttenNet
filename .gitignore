@@ -1,0 +1,11 @@
+data/
+f
+notebooks/
+.history/
+__pycache__/
+model/__pycache__/
+.vscode/
+/t.py
+/f.py
+outputs/
+test/
