@@ -13,9 +13,9 @@ class SpatialAttention(nn.Module):
     def __init__(self, in_feat, out_feat, inner_feat, drop_out, s_kernel=3, pad_s=1):
         super().__init__()
     
-        self.key_proj = DepthwiseSeparableConv(in_feat, out_feat, kernel_size=(1, s_kernel), padding=(0, pad_s))
-        self.value_proj = DepthwiseSeparableConv(in_feat, out_feat, kernel_size=(1, s_kernel), padding=(0, pad_s))
-        self.query_proj = DepthwiseSeparableConv(in_feat, out_feat, kernel_size=(1, s_kernel), padding=(0, pad_s))     
+        self.key_proj = nn.Conv2d(in_feat, out_feat, kernel_size=(1, s_kernel), padding=(0, pad_s))
+        self.value_proj = nn.Conv2d(in_feat, out_feat, kernel_size=(1, s_kernel), padding=(0, pad_s))
+        self.query_proj = nn.Conv2d(in_feat, out_feat, kernel_size=(1, s_kernel), padding=(0, pad_s))     
         self.head = out_feat // inner_feat
         if (self.head * inner_feat != out_feat):
             raise ValueError(f"out_feat must be divisible by inner_feat (got `out_feat`: {out_feat}"
@@ -26,7 +26,7 @@ class SpatialAttention(nn.Module):
         self.scale = (inner_feat ** -0.5)
         
         
-        self.out_proj = DepthwiseSeparableConv(out_feat, out_feat, kernel_size=(1, s_kernel), padding=(0, pad_s))
+        self.out_proj = nn.Conv2d(out_feat, out_feat, kernel_size=(1, s_kernel), padding=(0, pad_s))
         
     def forward(self, x, y=None):
         if y is None:
@@ -58,11 +58,11 @@ class SpatialTemporalModule(nn.Module):
 
         padd = t_kernel // 2
 
-        self.out_spatial = DepthwiseSeparableConv(out_feat, out_feat, kernel_size=(1, s_kernel), padding=(0, pad_s), stride=(1, 1), bias=True)
+        self.out_spatial = nn.Conv2d(out_feat, out_feat, kernel_size=(1, s_kernel), padding=(0, pad_s), stride=(1, 1), bias=False)
 
         
         self.out_temporal = nn.Sequential(
-            nn.Conv2d(out_feat, out_feat, kernel_size=(t_kernel, 1), padding=(padd, 0), stride=(stride, 1), bias=True),
+            nn.Conv2d(out_feat, out_feat, kernel_size=(t_kernel, 1), padding=(padd, 0), stride=(stride, 1), bias=False),
             nn.BatchNorm2d(out_feat))
 
         if in_feat != out_feat or stride != 1:
