@@ -187,20 +187,20 @@ class RecognitionNetwork(nn.Module):
         self.cfg = cfg
         self.cross_distillation = cfg['cross_distillation']
         
-        self.joint_idx = cfg['body_idx'] + cfg['left_idx'] + cfg['right_idx']
-        self.keypoint_encoder = KeypointModule(self.joint_idx, num_frame=cfg['num_frame'], 
-                                               nets=cfg['nets'], dropout=0.1)
+        # self.joint_idx = cfg['body_idx'] + cfg['left_idx'] + cfg['right_idx']
+        # self.keypoint_encoder = KeypointModule(self.joint_idx, num_frame=cfg['num_frame'], 
+        #                                        nets=cfg['nets'], dropout=0.1)
         
-        self.visual_head = VisualHead(**cfg['visual_head'], cls_num=len(gloss_tokenizer))
+        # self.visual_head = VisualHead(**cfg['visual_head'], cls_num=len(gloss_tokenizer))
         
-        # self.body_encoder = KeypointModule(cfg['body_idx'], num_frame=cfg['num_frame'], nets=cfg['nets'])
-        # self.left_encoder = KeypointModule(cfg['left_idx'], num_frame=cfg['num_frame'], nets=cfg['nets'])
-        # self.right_encoder = KeypointModule(cfg['right_idx'], num_frame=cfg['num_frame'], nets=cfg['nets'])
-        # self.face_encoder = KeypointModule(cfg['face_idx'], num_frame=cfg['num_frame'], nets=cfg['nets'])
+        self.body_encoder = KeypointModule(cfg['body_idx'], num_frame=cfg['num_frame'], nets=cfg['nets'])
+        self.left_encoder = KeypointModule(cfg['left_idx'], num_frame=cfg['num_frame'], nets=cfg['nets'])
+        self.right_encoder = KeypointModule(cfg['right_idx'], num_frame=cfg['num_frame'], nets=cfg['nets'])
+        self.face_encoder = KeypointModule(cfg['face_idx'], num_frame=cfg['num_frame'], nets=cfg['nets'])
         
-        # self.left_visual_head = VisualHead(**cfg['left_visual_head'], cls_num=len(gloss_tokenizer))
-        # self.right_visual_head = VisualHead(**cfg['right_visual_head'], cls_num=len(gloss_tokenizer))
-        # self.fuse_visual_head = VisualHead(**cfg['fuse_visual_head'], cls_num=len(gloss_tokenizer))
+        self.left_visual_head = VisualHead(**cfg['left_visual_head'], cls_num=len(gloss_tokenizer))
+        self.right_visual_head = VisualHead(**cfg['right_visual_head'], cls_num=len(gloss_tokenizer))
+        self.fuse_visual_head = VisualHead(**cfg['fuse_visual_head'], cls_num=len(gloss_tokenizer))
         
         self.loss_fn = nn.CTCLoss(
             blank=0,
@@ -212,63 +212,63 @@ class RecognitionNetwork(nn.Module):
         keypoints = src_input['keypoints'].permute(0, 3, 1, 2)
         mask = src_input['mask']
     
-        # (_, body_embed), (_, _) = self.body_encoder(keypoints[:, :, :, self.cfg['body_idx']])
-        # (_, left_embed), (_, _) = self.left_encoder(keypoints[:, :, :, self.cfg['left_idx']])
-        # (_, right_embed), (_, _) = self.right_encoder(keypoints[:, :, :, self.cfg['right_idx']])
-        # (_, face_embed), (_, _) = self.face_encoder(keypoints[:, :, :, self.cfg['face_idx']])
+        (_, body_embed), (_, _) = self.body_encoder(keypoints[:, :, :, self.cfg['body_idx']])
+        (_, left_embed), (_, _) = self.left_encoder(keypoints[:, :, :, self.cfg['left_idx']])
+        (_, right_embed), (_, _) = self.right_encoder(keypoints[:, :, :, self.cfg['right_idx']])
+        (_, face_embed), (_, _) = self.face_encoder(keypoints[:, :, :, self.cfg['face_idx']])
         
-        # body_embed = body_embed.mean(dim=-1).permute(0, 2, 1)
-        # left_embed = left_embed.mean(dim=-1).permute(0, 2, 1)
-        # right_embed = right_embed.mean(dim=-1).permute(0, 2, 1)
-        # face_embed = face_embed.mean(dim=-1).permute(0, 2, 1)
+        body_embed = body_embed.mean(dim=-1).permute(0, 2, 1)
+        left_embed = left_embed.mean(dim=-1).permute(0, 2, 1)
+        right_embed = right_embed.mean(dim=-1).permute(0, 2, 1)
+        face_embed = face_embed.mean(dim=-1).permute(0, 2, 1)
         
-        (_, embed), (_, _) = self.keypoint_encoder(keypoints[:, :, :, self.joint_idx])
-        embed = embed.mean(dim=-1).permute(0, 2, 1)
+        # (_, embed), (_, _) = self.keypoint_encoder(keypoints[:, :, :, self.joint_idx])
+        # embed = embed.mean(dim=-1).permute(0, 2, 1)
         
-        # fuse_output = torch.cat([left_embed, right_embed, body_embed], dim=-1)
+        fuse_output = torch.cat([left_embed, right_embed, body_embed], dim=-1)
        
-        # left_output = torch.cat([left_embed, body_embed], dim=-1)
-        # right_output = torch.cat([right_embed, body_embed], dim=-1)
+        left_output = torch.cat([left_embed, body_embed], dim=-1)
+        right_output = torch.cat([right_embed, body_embed], dim=-1)
         
         
         
         valid_len_in = src_input['valid_len_in']
         mask_head = src_input['mask_head']
         
-        # left_head = self.left_visual_head(left_output, mask_head, valid_len_in)  
-        # right_head = self.right_visual_head(right_output, mask_head, valid_len_in)  
-        # fuse_head = self.fuse_visual_head(fuse_output, mask_head, valid_len_in)
+        left_head = self.left_visual_head(left_output, mask_head, valid_len_in)  
+        right_head = self.right_visual_head(right_output, mask_head, valid_len_in)  
+        fuse_head = self.fuse_visual_head(fuse_output, mask_head, valid_len_in)
         
-        head = self.visual_head(embed, mask_head, valid_len_in)
+        # head = self.visual_head(embed, mask_head, valid_len_in)
         
-        # head_outputs = {'ensemble_last_gloss_logits': (left_head['gloss_logits'] + 
-        #                                                right_head['gloss_logits'] + 
-        #                                                fuse_head['gloss_logits']).log(),
-        #                     'fuse': fuse_output,
-        #                     'fuse_gloss_logits': fuse_head['gloss_logits'],
-        #                     'fuse_gloss_probabilities_log': fuse_head['gloss_probabilities_log'],
-        #                     'left_gloss_logits': left_head['gloss_logits'],
-        #                     'left_gloss_probabilities_log': left_head['gloss_probabilities_log'],
-        #                     'right_gloss_logits': right_head['gloss_logits'],
-        #                     'right_gloss_probabilities_log': right_head['gloss_probabilities_log'],
-        #                     }
-        head_outputs = {
-                            'fuse': head,
-                            'fuse_gloss_logits': head['gloss_logits'],
-                            'fuse_gloss_probabilities_log': head['gloss_probabilities_log'],
-                           
+        head_outputs = {'ensemble_last_gloss_logits': (left_head['gloss_logits'] + 
+                                                       right_head['gloss_logits'] + 
+                                                       fuse_head['gloss_logits']).log(),
+                            'fuse': fuse_output,
+                            'fuse_gloss_logits': fuse_head['gloss_logits'],
+                            'fuse_gloss_probabilities_log': fuse_head['gloss_probabilities_log'],
+                            'left_gloss_logits': left_head['gloss_logits'],
+                            'left_gloss_probabilities_log': left_head['gloss_probabilities_log'],
+                            'right_gloss_logits': right_head['gloss_logits'],
+                            'right_gloss_probabilities_log': right_head['gloss_probabilities_log'],
                             }
+        # head_outputs = {
+        #                     'fuse': head,
+        #                     'fuse_gloss_logits': head['gloss_logits'],
+        #                     'fuse_gloss_probabilities_log': head['gloss_probabilities_log'],
+                           
+        #                     }
 
         outputs = {**head_outputs,
                    'input_lengths':src_input['valid_len_in']}
 
-        for k in ['fuse']:
+        for k in ['fuse', 'left', 'right']:
             outputs[f'recognition_loss_{k}'] = self.compute_loss(
                 gloss_labels=src_input['gloss_labels'],
                 gloss_lengths=src_input['gloss_lengths'],
                 gloss_probabilities_log=head_outputs[f'{k}_gloss_probabilities_log'],
                 input_lengths=src_input['valid_len_in'])
-        outputs['recognition_loss'] = outputs['recognition_loss_fuse']
+        outputs['recognition_loss'] = outputs['recognition_loss_fuse'] + outputs['recognition_loss_left'] + outputs['recognition_loss_right']
         if self.cross_distillation:
             loss_func = torch.nn.KLDivLoss()
             for student in ['fuse']:

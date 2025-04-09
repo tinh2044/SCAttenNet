@@ -126,7 +126,7 @@ def main(args, cfg):
         print(f"Dev loss of the network on the {len(dev_dataloader)} test videos: {dev_stats['loss']:.3f}")
 
         test_stats = evaluate_fn(args, config, test_dataloader, model, gloss_tokenizer, epoch=0, beam_size=5,
-                              generate_cfg=config['testing']['translation'],
+                              generate_cfg={},
                               do_translation=config['do_translation'], do_recognition=config['do_recognition'],
                               print_freq=args.print_freq, results_path="./test_results.json")
         print(f"Test loss of the network on the {len(test_dataloader)} test videos: {test_stats['loss']:.3f}")
@@ -153,7 +153,7 @@ def main(args, cfg):
             }, checkpoint_path)
         print()
         test_results = evaluate_fn(args, config, dev_dataloader, model, gloss_tokenizer, epoch,
-                              beam_size=config['training']['validation']['recognition']['beam_size'],
+                              beam_size=5,
                               generate_cfg={},
                               do_translation=config['do_translation'], do_recognition=config['do_recognition'], print_freq=args.print_freq)
         if config['task'] == "S2T":
