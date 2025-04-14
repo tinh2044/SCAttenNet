@@ -1,7 +1,6 @@
 import pickle
 import torch, pickle, json
 from collections import defaultdict
-from transformers import MBartTokenizer
 
 
 def shift_tokens_right(input_ids: torch.Tensor, pad_token_id: int, ignore_index: int=-100):
@@ -94,7 +93,7 @@ class GlossTokenizer:
         return {
             'input_ids': input_ids,
             'attention_mask': attention_mask,
-            'length': lengths
+            'length': lengths if return_length else None
             }
     
     def decode(self, _input, skip_special_tokens=True):
@@ -107,10 +106,13 @@ class GlossTokenizer:
             
         if skip_special_tokens:
             tokens = tokens[tokens != self.pad_id]
-        
+        tokens = tokens.tolist()
         return " ".join([self.id2gloss[int(x)] for x in tokens])
+    
         
     def batch_decode(self, batch, skip_special_tokens=True):
+        if type(batch) is dict:
+            batch = batch['input_ids']
         return [self.decode(x, skip_special_tokens) for x in batch]
     
     def __call__(self, batch):

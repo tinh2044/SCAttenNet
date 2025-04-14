@@ -132,7 +132,7 @@ def main(args, cfg):
         print(f"Test loss of the network on the {len(test_dataloader)} test videos: {test_stats['loss']:.3f}")
         return
 
-    print(f"Trainining on {device}")
+    print(f"Training on {device}")
     print(f"Start training for {args.epochs} epochs")
     start_time = time.time()
     min_loss = 200

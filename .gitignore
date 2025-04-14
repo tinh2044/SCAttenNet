@@ -8,4 +8,5 @@ model/__pycache__/
 /t.py
 /f.py
 outputs/
-test/
+tests/
+tools/

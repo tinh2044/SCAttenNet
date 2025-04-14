@@ -98,23 +98,10 @@ class CoordinateMapping(nn.Module):
     def __init__(self, in_feat, out_feat):
         super(CoordinateMapping, self).__init__()
         
-        self.mapping_x = nn.Sequential(
-            nn.Conv2d(in_feat, out_feat, kernel_size=(1, 1)),
-            nn.BatchNorm2d(out_feat),
-            nn.LeakyReLU(0.1)
-        )
-        self.mapping_y = nn.Sequential(
-            nn.Conv2d(in_feat, out_feat, kernel_size=(1, 1)),
-            nn.BatchNorm2d(out_feat),
-            nn.LeakyReLU(0.1)
-        )
+        self.mapping_x = nn.Linear(in_feat, out_feat)
+        self.mapping_y = nn.Linear(in_feat, out_feat)
 
     def forward(self, x_coord, y_coord):
-        if x_coord.dim() == 3:
-            x_coord = x_coord.unsqueeze(1)
-        if y_coord.dim() == 3:
-            y_coord = y_coord.unsqueeze(1)
-        
         x_embed = self.mapping_x(x_coord)       
 
         y_embed = self.mapping_y(y_coord)        

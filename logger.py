@@ -1,17 +1,13 @@
 import os
+import sys
 import time
-from collections import defaultdict, deque
 import datetime
+from collections import defaultdict, deque
 
 import torch
 import torch.distributed as dist
+from loguru import logger
 
-import time
-import datetime
-import os
-import torch
-from collections import defaultdict
-from tqdm import tqdm
 from utils import is_dist_avail_and_initialized
 
 class SmoothedValue(object):
@@ -176,3 +172,45 @@ class MetricLogger(object):
         else:
             print('{} Total time: {} ({:.4f} s / it)'.format(
                 header, total_time_str, total_time / len(iterable)))
+            
+
+class Logger:
+    def __init__(self, log_dir="logs", prefix="logfile"):
+        os.makedirs(log_dir, exist_ok=True)  # Tạo thư mục nếu chưa có
+
+        timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+        self.log_file = f"{log_dir}/{prefix}_{timestamp}.log"
+
+        logger.add(sys.stdout, format="{time} {level} {message}", level="INFO")  # Log ra console
+        logger.add(self.log_file, format="{time} {level} {message}", level="INFO", rotation="10MB")  # Log ra file
+
+        print(f"Logging to {self.log_file}")
+        
+    def write(self, message):
+        """Ghi log thay thế print(), hỗ trợ live writing"""
+        logger.info(message.strip())
+        with open(self.log_file, "a", encoding="utf-8") as f:
+            f.write(message.strip() + "\n")  # Ghi vào file ngay lập tức
+            f.flush()  # Đảm bảo ghi ngay
+
+        # sys.__stdout__.write(message)  # Ghi ra console ngay lập tức
+
+    def flush(self):
+        """Flush dữ liệu (không cần thiết do đã gọi flush() trong write)"""
+        pass  
+
+    @staticmethod
+    def info(msg):
+        """Ghi log mức INFO"""
+        logger.info(msg)
+
+    @staticmethod
+    def warning(msg):
+        """Ghi log mức WARNING"""
+        logger.warning(msg)
+
+    @staticmethod
+    def error(msg):
+        """Ghi log mức ERROR"""
+        logger.error(msg)
+
