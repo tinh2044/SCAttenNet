@@ -220,7 +220,7 @@ class RecognitionNetwork(nn.Module):
         left_embed = self.left_encoder(keypoints[:, :, self.cfg['left_idx'], :],mask )
         right_embed = self.right_encoder(keypoints[:, :, self.cfg['right_idx'], :],mask )
 
-
+        
         
         fuse_output = torch.cat([left_embed, right_embed, body_embed], dim=-1)
         left_output = torch.cat([left_embed, body_embed], dim=-1)
@@ -229,7 +229,7 @@ class RecognitionNetwork(nn.Module):
         
         
         valid_len_in = src_input['valid_len_in']
-        mask_head = src_input['mask_head']
+        mask_head = src_input['mask_head'][:, :fuse_output.shape[1]]
         
         left_head = self.left_visual_head(left_output, mask_head, valid_len_in)  
         right_head = self.right_visual_head(right_output, mask_head, valid_len_in)  
