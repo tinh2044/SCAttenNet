@@ -10,21 +10,8 @@ class Dict(dict):
 
 
 class PositionalEncoding(nn.Module):
-    """
-    Pre-compute position encodings (PE).
-    In forward pass, this adds the position-encodings to the
-    input for as many time steps as necessary.
-    Implementation based on OpenNMT-py.
-    https://github.com/OpenNMT/OpenNMT-py
-    """
 
     def __init__(self, size: int = 0, max_len: int = 5000):
-        """
-        Positional Encoding with maximum length max_len
-        :param size:
-        :param max_len:
-        :param dropout:
-        """
         if size % 2 != 0:
             raise ValueError(
                 "Cannot use sin/cos positional encoding with "
@@ -43,12 +30,6 @@ class PositionalEncoding(nn.Module):
         self.dim = size
 
     def forward(self, emb):
-        """Embed inputs.
-        Args:
-            emb (FloatTensor): Sequence of word vectors
-                ``(seq_len, batch_size, self.dim)``
-        """
-        # Add position encodings
         return emb + self.pe[:, : emb.size(1)]
 
 

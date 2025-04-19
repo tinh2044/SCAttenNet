@@ -19,23 +19,28 @@ class LearningPositionEmbedding(nn.Embedding):
         return inputs_embeds + positions_embeddings
 
 class StaticPositionalEncoding(nn.Module):
-    def __init__(self, d_model, max_seq_len=5000):
 
-        super(StaticPositionalEncoding, self).__init__()
+    def __init__(self, size: int = 0, max_len: int = 5000):
+        if size % 2 != 0:
+            raise ValueError(
+                "Cannot use sin/cos positional encoding with "
+                "odd dim (got dim={:d})".format(size)
+            )
+        pe = torch.zeros(max_len, size)
+        position = torch.arange(0, max_len).unsqueeze(1)
+        div_term = torch.exp(
+            (torch.arange(0, size, 2, dtype=torch.float) * -(math.log(10000.0) / size))
+        )
+        pe[:, 0::2] = torch.sin(position.float() * div_term)
+        pe[:, 1::2] = torch.cos(position.float() * div_term)
+        pe = pe.unsqueeze(0)  # shape: [1, size, max_len]
+        super(PositionalEncoding, self).__init__()
+        self.register_buffer("pe", pe)
+        self.dim = size
 
-        pe = torch.zeros(max_seq_len, d_model)
-        
-        position = torch.arange(0, max_seq_len, dtype=torch.float).unsqueeze(1)
+    def forward(self, emb):
+        return emb + self.pe[:, : emb.size(1)]
 
-        div_term = torch.exp(torch.arange(0, d_model, 2).float() * -(math.log(10000.0) / d_model))
-        pe[:, 0::2] = torch.sin(position * div_term) 
-        pe[:, 1::2] = torch.cos(position * div_term)
-
-        self.register_buffer('pe', pe.unsqueeze(0)) 
-
-    def forward(self, inputs_embeds):
-        seq_len = inputs_embeds.size(1)
-        return inputs_embeds + self.pe[:, :seq_len, :]
 
 class FeedForwardLayer(nn.Module):
     def __init__(self, in_feat, out_feat, dropout):

@@ -1,10 +1,10 @@
 import torch
 from torch import nn
-import torch.utils.checkpoint
 from model.layers import CoordinateMapping, PositionalEncoding
 from model.encoder import Encoder
 from model.decoder import Decoder
 from model.visual_head import VisualHead
+from model.residual import ResidualNetwork
 
 import torch
 import torch.nn as nn
@@ -165,10 +165,9 @@ class KeypointModule(nn.Module):
         self.coordinate_mapping = CoordinateMapping(len(joint_idx), cfg['d_model'])
         
         self.x_coord_module = Encoder(cfg)
-        self.y_coord_module = Decoder(cfg)
-
+        self.y_coord_module = Decoder(cfg)      
         
-        
+        self.residual_net = ResidualNetwork(cfg['d_model'])
     
     def forward(self, keypoints, attention_mask=None):
         x = keypoints[:, :, :, 0]
@@ -183,7 +182,7 @@ class KeypointModule(nn.Module):
                                     y_embed=y_embed, 
                                     attention_mask=attention_mask)
         
-        
+        ouput_embed = self.residual_net(y_embed)
         
         return y_embed
     
@@ -195,20 +194,17 @@ class RecognitionNetwork(nn.Module):
         self.cfg = cfg
         self.cross_distillation = cfg['cross_distillation']
         
-        # self.joint_idx = cfg['body_idx'] + cfg['left_idx'] + cfg['right_idx']
-        # self.keypoint_encoder = KeypointModule(self.joint_idx, num_frame=cfg['num_frame'], 
-        #                                        nets=cfg['nets'], dropout=0.1)
-        
-        # self.visual_head = VisualHead(**cfg['visual_head'], cls_num=len(gloss_tokenizer))
-        
         self.body_encoder = KeypointModule(cfg['body_idx'], num_frame=cfg['num_frame'], nets=cfg['nets'], cfg=cfg)
         self.left_encoder = KeypointModule(cfg['left_idx'], num_frame=cfg['num_frame'], nets=cfg['nets'], cfg=cfg)
         self.right_encoder = KeypointModule(cfg['right_idx'], num_frame=cfg['num_frame'], nets=cfg['nets'], cfg=cfg)
         self.face_encoder = KeypointModule(cfg['face_idx'], num_frame=cfg['num_frame'], nets=cfg['nets'], cfg=cfg)
         
+        
         self.left_visual_head = VisualHead(**cfg['left_visual_head'], cls_num=len(gloss_tokenizer))
         self.right_visual_head = VisualHead(**cfg['right_visual_head'], cls_num=len(gloss_tokenizer))
         self.fuse_visual_head = VisualHead(**cfg['fuse_visual_head'], cls_num=len(gloss_tokenizer))
+        
+        
         
         self.loss_fn = nn.CTCLoss(
             blank=0,
@@ -223,15 +219,8 @@ class RecognitionNetwork(nn.Module):
         body_embed = self.body_encoder(keypoints[:, :, self.cfg['body_idx'], :],mask )
         left_embed = self.left_encoder(keypoints[:, :, self.cfg['left_idx'], :],mask )
         right_embed = self.right_encoder(keypoints[:, :, self.cfg['right_idx'], :],mask )
-        # face_embed = self.face_encoder(keypoints[:, :, self.cfg['face_idx'], :],mask )
-        
-        # body_embed = body_embed.permute(0, 2, 1, 3).mean(dim=-1)
-        # left_embed = left_embed.permute(0, 2, 1, 3).mean(dim=-1)
-        # right_embed = right_embed.permute(0, 2, 1, 3).mean(dim=-1)
-        # face_embed = face_embed.permute(0, 2, 1, 3).mean(dim=-1)
-        
-        # (_, embed), (_, _) = self.keypoint_encoder(keypoints[:, :, :, self.joint_idx])
-        # embed = embed.mean(dim=-1).permute(0, 2, 1)
+
+
         
         fuse_output = torch.cat([left_embed, right_embed, body_embed], dim=-1)
         left_output = torch.cat([left_embed, body_embed], dim=-1)
@@ -242,9 +231,9 @@ class RecognitionNetwork(nn.Module):
         valid_len_in = src_input['valid_len_in']
         mask_head = src_input['mask_head']
         
-        left_head = self.left_visual_head(left_output, mask, valid_len_in)  
-        right_head = self.right_visual_head(right_output, mask, valid_len_in)  
-        fuse_head = self.fuse_visual_head(fuse_output, mask, valid_len_in)
+        left_head = self.left_visual_head(left_output, mask_head, valid_len_in)  
+        right_head = self.right_visual_head(right_output, mask_head, valid_len_in)  
+        fuse_head = self.fuse_visual_head(fuse_output, mask_head, valid_len_in)
         
         # head = self.visual_head(embed, mask_head, valid_len_in)
         
