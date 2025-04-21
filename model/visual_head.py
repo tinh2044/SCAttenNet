@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from model.model_utils import PositionalEncoding, MaskedNorm, PositionWiseFeedForward, MLPHead
+from model.layers import StaticPositionalEncoding, MaskedNorm, PositionWiseFeedForward, MLPHead
 
 
 class VisualHead(torch.nn.Module):
@@ -20,7 +20,7 @@ class VisualHead(torch.nn.Module):
         self.dropout1 = torch.nn.Dropout(p=0.1)
 
         if pe:
-            self.pe = PositionalEncoding(self.hidden_size)
+            self.pe = StaticPositionalEncoding(self.hidden_size)
         else:
             self.pe = torch.nn.Identity()
 

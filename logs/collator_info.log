@@ -1,297 +1,297 @@
-2025-04-14 15:45:25,672 - INFO - [test_data_collator.py:146] - 
+2025-04-21 14:40:40,610 - INFO - [test_data_collator.py:153] - 
 Testing train split...
-2025-04-14 15:45:26,809 - INFO - [test_data_collator.py:156] - Dataset size: 7096
-2025-04-14 15:45:26,809 - INFO - [test_data_collator.py:97] - Testing DataLoader with batch size 1
-2025-04-14 15:45:26,914 - INFO - [test_data_collator.py:101] - Testing batch 1
-2025-04-14 15:45:26,914 - INFO - [test_data_collator.py:111] - Batch 1 shapes:
-2025-04-14 15:45:26,914 - INFO - [test_data_collator.py:123] - name: <class 'list'>
-2025-04-14 15:45:26,914 - INFO - [test_data_collator.py:114] - keypoints: torch.Size([1, 97, 543, 2])
-2025-04-14 15:45:26,922 - INFO - [test_data_collator.py:114] - valid_len_in: torch.Size([1])
-2025-04-14 15:45:26,922 - INFO - [test_data_collator.py:114] - mask: torch.Size([1, 97])
-2025-04-14 15:45:26,922 - INFO - [test_data_collator.py:114] - mask_head: torch.Size([1, 25])
-2025-04-14 15:45:26,923 - INFO - [test_data_collator.py:114] - gloss_labels: torch.Size([1, 14])
-2025-04-14 15:45:26,923 - INFO - [test_data_collator.py:114] - gloss_lengths: torch.Size([1])
-2025-04-14 15:45:26,923 - INFO - [test_data_collator.py:123] - gloss_input: <class 'list'>
-2025-04-14 15:45:26,924 - INFO - [test_data_collator.py:123] - text_input: <class 'list'>
-2025-04-14 15:45:26,953 - INFO - [test_data_collator.py:101] - Testing batch 2
-2025-04-14 15:45:26,953 - INFO - [test_data_collator.py:111] - Batch 2 shapes:
-2025-04-14 15:45:26,955 - INFO - [test_data_collator.py:123] - name: <class 'list'>
-2025-04-14 15:45:26,956 - INFO - [test_data_collator.py:114] - keypoints: torch.Size([1, 116, 543, 2])
-2025-04-14 15:45:26,956 - INFO - [test_data_collator.py:114] - valid_len_in: torch.Size([1])
-2025-04-14 15:45:26,956 - INFO - [test_data_collator.py:114] - mask: torch.Size([1, 116])
-2025-04-14 15:45:26,957 - INFO - [test_data_collator.py:114] - mask_head: torch.Size([1, 29])
-2025-04-14 15:45:26,957 - INFO - [test_data_collator.py:114] - gloss_labels: torch.Size([1, 7])
-2025-04-14 15:45:26,957 - INFO - [test_data_collator.py:114] - gloss_lengths: torch.Size([1])
-2025-04-14 15:45:26,957 - INFO - [test_data_collator.py:123] - gloss_input: <class 'list'>
-2025-04-14 15:45:26,958 - INFO - [test_data_collator.py:123] - text_input: <class 'list'>
-2025-04-14 15:45:26,958 - INFO - [test_data_collator.py:168] - Successfully tested collator with batch_size=1
-2025-04-14 15:45:26,959 - INFO - [test_data_collator.py:97] - Testing DataLoader with batch size 2
-2025-04-14 15:45:27,017 - INFO - [test_data_collator.py:101] - Testing batch 1
-2025-04-14 15:45:27,017 - INFO - [test_data_collator.py:111] - Batch 1 shapes:
-2025-04-14 15:45:27,019 - INFO - [test_data_collator.py:123] - name: <class 'list'>
-2025-04-14 15:45:27,019 - INFO - [test_data_collator.py:114] - keypoints: torch.Size([2, 123, 543, 2])
-2025-04-14 15:45:27,019 - INFO - [test_data_collator.py:114] - valid_len_in: torch.Size([2])
-2025-04-14 15:45:27,019 - INFO - [test_data_collator.py:114] - mask: torch.Size([2, 123])
-2025-04-14 15:45:27,019 - INFO - [test_data_collator.py:114] - mask_head: torch.Size([2, 31])
-2025-04-14 15:45:27,020 - INFO - [test_data_collator.py:114] - gloss_labels: torch.Size([2, 14])
-2025-04-14 15:45:27,020 - INFO - [test_data_collator.py:114] - gloss_lengths: torch.Size([2])
-2025-04-14 15:45:27,020 - INFO - [test_data_collator.py:123] - gloss_input: <class 'list'>
-2025-04-14 15:45:27,020 - INFO - [test_data_collator.py:123] - text_input: <class 'list'>
-2025-04-14 15:45:27,082 - INFO - [test_data_collator.py:101] - Testing batch 2
-2025-04-14 15:45:27,083 - INFO - [test_data_collator.py:111] - Batch 2 shapes:
-2025-04-14 15:45:27,083 - INFO - [test_data_collator.py:123] - name: <class 'list'>
-2025-04-14 15:45:27,083 - INFO - [test_data_collator.py:114] - keypoints: torch.Size([2, 119, 543, 2])
-2025-04-14 15:45:27,084 - INFO - [test_data_collator.py:114] - valid_len_in: torch.Size([2])
-2025-04-14 15:45:27,084 - INFO - [test_data_collator.py:114] - mask: torch.Size([2, 119])
-2025-04-14 15:45:27,084 - INFO - [test_data_collator.py:114] - mask_head: torch.Size([2, 30])
-2025-04-14 15:45:27,085 - INFO - [test_data_collator.py:114] - gloss_labels: torch.Size([2, 13])
-2025-04-14 15:45:27,085 - INFO - [test_data_collator.py:114] - gloss_lengths: torch.Size([2])
-2025-04-14 15:45:27,086 - INFO - [test_data_collator.py:123] - gloss_input: <class 'list'>
-2025-04-14 15:45:27,086 - INFO - [test_data_collator.py:123] - text_input: <class 'list'>
-2025-04-14 15:45:27,086 - INFO - [test_data_collator.py:168] - Successfully tested collator with batch_size=2
-2025-04-14 15:45:27,086 - INFO - [test_data_collator.py:97] - Testing DataLoader with batch size 4
-2025-04-14 15:45:27,169 - INFO - [test_data_collator.py:101] - Testing batch 1
-2025-04-14 15:45:27,170 - INFO - [test_data_collator.py:111] - Batch 1 shapes:
-2025-04-14 15:45:27,170 - INFO - [test_data_collator.py:123] - name: <class 'list'>
-2025-04-14 15:45:27,170 - INFO - [test_data_collator.py:114] - keypoints: torch.Size([4, 111, 543, 2])
-2025-04-14 15:45:27,170 - INFO - [test_data_collator.py:114] - valid_len_in: torch.Size([4])
-2025-04-14 15:45:27,171 - INFO - [test_data_collator.py:114] - mask: torch.Size([4, 111])
-2025-04-14 15:45:27,171 - INFO - [test_data_collator.py:114] - mask_head: torch.Size([4, 28])
-2025-04-14 15:45:27,171 - INFO - [test_data_collator.py:114] - gloss_labels: torch.Size([4, 14])
-2025-04-14 15:45:27,171 - INFO - [test_data_collator.py:114] - gloss_lengths: torch.Size([4])
-2025-04-14 15:45:27,172 - INFO - [test_data_collator.py:123] - gloss_input: <class 'list'>
-2025-04-14 15:45:27,172 - INFO - [test_data_collator.py:123] - text_input: <class 'list'>
-2025-04-14 15:45:27,297 - INFO - [test_data_collator.py:101] - Testing batch 2
-2025-04-14 15:45:27,297 - INFO - [test_data_collator.py:111] - Batch 2 shapes:
-2025-04-14 15:45:27,297 - INFO - [test_data_collator.py:123] - name: <class 'list'>
-2025-04-14 15:45:27,298 - INFO - [test_data_collator.py:114] - keypoints: torch.Size([4, 121, 543, 2])
-2025-04-14 15:45:27,299 - INFO - [test_data_collator.py:114] - valid_len_in: torch.Size([4])
-2025-04-14 15:45:27,299 - INFO - [test_data_collator.py:114] - mask: torch.Size([4, 121])
-2025-04-14 15:45:27,299 - INFO - [test_data_collator.py:114] - mask_head: torch.Size([4, 31])
-2025-04-14 15:45:27,301 - INFO - [test_data_collator.py:114] - gloss_labels: torch.Size([4, 11])
-2025-04-14 15:45:27,301 - INFO - [test_data_collator.py:114] - gloss_lengths: torch.Size([4])
-2025-04-14 15:45:27,302 - INFO - [test_data_collator.py:123] - gloss_input: <class 'list'>
-2025-04-14 15:45:27,302 - INFO - [test_data_collator.py:123] - text_input: <class 'list'>
-2025-04-14 15:45:27,303 - INFO - [test_data_collator.py:168] - Successfully tested collator with batch_size=4
-2025-04-14 15:45:27,303 - INFO - [test_data_collator.py:97] - Testing DataLoader with batch size 8
-2025-04-14 15:45:27,491 - INFO - [test_data_collator.py:101] - Testing batch 1
-2025-04-14 15:45:27,492 - INFO - [test_data_collator.py:111] - Batch 1 shapes:
-2025-04-14 15:45:27,493 - INFO - [test_data_collator.py:123] - name: <class 'list'>
-2025-04-14 15:45:27,493 - INFO - [test_data_collator.py:114] - keypoints: torch.Size([8, 127, 543, 2])
-2025-04-14 15:45:27,493 - INFO - [test_data_collator.py:114] - valid_len_in: torch.Size([8])
-2025-04-14 15:45:27,493 - INFO - [test_data_collator.py:114] - mask: torch.Size([8, 127])
-2025-04-14 15:45:27,493 - INFO - [test_data_collator.py:114] - mask_head: torch.Size([8, 32])
-2025-04-14 15:45:27,494 - INFO - [test_data_collator.py:114] - gloss_labels: torch.Size([8, 14])
-2025-04-14 15:45:27,494 - INFO - [test_data_collator.py:114] - gloss_lengths: torch.Size([8])
-2025-04-14 15:45:27,494 - INFO - [test_data_collator.py:123] - gloss_input: <class 'list'>
-2025-04-14 15:45:27,495 - INFO - [test_data_collator.py:123] - text_input: <class 'list'>
-2025-04-14 15:45:27,708 - INFO - [test_data_collator.py:101] - Testing batch 2
-2025-04-14 15:45:27,708 - INFO - [test_data_collator.py:111] - Batch 2 shapes:
-2025-04-14 15:45:27,709 - INFO - [test_data_collator.py:123] - name: <class 'list'>
-2025-04-14 15:45:27,709 - INFO - [test_data_collator.py:114] - keypoints: torch.Size([8, 129, 543, 2])
-2025-04-14 15:45:27,712 - INFO - [test_data_collator.py:114] - valid_len_in: torch.Size([8])
-2025-04-14 15:45:27,712 - INFO - [test_data_collator.py:114] - mask: torch.Size([8, 129])
-2025-04-14 15:45:27,714 - INFO - [test_data_collator.py:114] - mask_head: torch.Size([8, 33])
-2025-04-14 15:45:27,714 - INFO - [test_data_collator.py:114] - gloss_labels: torch.Size([8, 22])
-2025-04-14 15:45:27,714 - INFO - [test_data_collator.py:114] - gloss_lengths: torch.Size([8])
-2025-04-14 15:45:27,714 - INFO - [test_data_collator.py:123] - gloss_input: <class 'list'>
-2025-04-14 15:45:27,714 - INFO - [test_data_collator.py:123] - text_input: <class 'list'>
-2025-04-14 15:45:27,714 - INFO - [test_data_collator.py:168] - Successfully tested collator with batch_size=8
-2025-04-14 15:45:27,714 - INFO - [test_data_collator.py:146] - 
+2025-04-21 14:40:40,923 - INFO - [test_data_collator.py:163] - Dataset size: 7096
+2025-04-21 14:40:40,937 - INFO - [test_data_collator.py:104] - Testing DataLoader with batch size 1
+2025-04-21 14:40:41,120 - INFO - [test_data_collator.py:108] - Testing batch 1
+2025-04-21 14:40:41,120 - INFO - [test_data_collator.py:118] - Batch 1 shapes:
+2025-04-21 14:40:41,124 - INFO - [test_data_collator.py:130] - name: <class 'list'>
+2025-04-21 14:40:41,125 - INFO - [test_data_collator.py:121] - keypoints: torch.Size([1, 58, 543, 2])
+2025-04-21 14:40:41,125 - INFO - [test_data_collator.py:121] - valid_len_in: torch.Size([1, 14])
+2025-04-21 14:40:41,125 - INFO - [test_data_collator.py:121] - mask: torch.Size([1, 58])
+2025-04-21 14:40:41,139 - INFO - [test_data_collator.py:121] - mask_head: torch.Size([1, 14])
+2025-04-21 14:40:41,159 - INFO - [test_data_collator.py:121] - gloss_labels: torch.Size([1, 8])
+2025-04-21 14:40:41,174 - INFO - [test_data_collator.py:121] - gloss_lengths: torch.Size([1])
+2025-04-21 14:40:41,179 - INFO - [test_data_collator.py:130] - gloss_input: <class 'list'>
+2025-04-21 14:40:41,182 - INFO - [test_data_collator.py:130] - text_input: <class 'list'>
+2025-04-21 14:40:41,278 - INFO - [test_data_collator.py:108] - Testing batch 2
+2025-04-21 14:40:41,285 - INFO - [test_data_collator.py:118] - Batch 2 shapes:
+2025-04-21 14:40:41,292 - INFO - [test_data_collator.py:130] - name: <class 'list'>
+2025-04-21 14:40:41,304 - INFO - [test_data_collator.py:121] - keypoints: torch.Size([1, 128, 543, 2])
+2025-04-21 14:40:41,309 - INFO - [test_data_collator.py:121] - valid_len_in: torch.Size([1, 32])
+2025-04-21 14:40:41,320 - INFO - [test_data_collator.py:121] - mask: torch.Size([1, 128])
+2025-04-21 14:40:41,332 - INFO - [test_data_collator.py:121] - mask_head: torch.Size([1, 32])
+2025-04-21 14:40:41,335 - INFO - [test_data_collator.py:121] - gloss_labels: torch.Size([1, 6])
+2025-04-21 14:40:41,344 - INFO - [test_data_collator.py:121] - gloss_lengths: torch.Size([1])
+2025-04-21 14:40:41,348 - INFO - [test_data_collator.py:130] - gloss_input: <class 'list'>
+2025-04-21 14:40:41,351 - INFO - [test_data_collator.py:130] - text_input: <class 'list'>
+2025-04-21 14:40:41,370 - INFO - [test_data_collator.py:175] - Successfully tested collator with batch_size=1
+2025-04-21 14:40:41,377 - INFO - [test_data_collator.py:104] - Testing DataLoader with batch size 2
+2025-04-21 14:40:41,490 - INFO - [test_data_collator.py:108] - Testing batch 1
+2025-04-21 14:40:41,517 - INFO - [test_data_collator.py:118] - Batch 1 shapes:
+2025-04-21 14:40:41,530 - INFO - [test_data_collator.py:130] - name: <class 'list'>
+2025-04-21 14:40:41,537 - INFO - [test_data_collator.py:121] - keypoints: torch.Size([2, 70, 543, 2])
+2025-04-21 14:40:41,540 - INFO - [test_data_collator.py:121] - valid_len_in: torch.Size([2, 17])
+2025-04-21 14:40:41,541 - INFO - [test_data_collator.py:121] - mask: torch.Size([2, 70])
+2025-04-21 14:40:41,542 - INFO - [test_data_collator.py:121] - mask_head: torch.Size([2, 17])
+2025-04-21 14:40:41,543 - INFO - [test_data_collator.py:121] - gloss_labels: torch.Size([2, 8])
+2025-04-21 14:40:41,544 - INFO - [test_data_collator.py:121] - gloss_lengths: torch.Size([2])
+2025-04-21 14:40:41,546 - INFO - [test_data_collator.py:130] - gloss_input: <class 'list'>
+2025-04-21 14:40:41,549 - INFO - [test_data_collator.py:130] - text_input: <class 'list'>
+2025-04-21 14:40:41,751 - INFO - [test_data_collator.py:108] - Testing batch 2
+2025-04-21 14:40:41,753 - INFO - [test_data_collator.py:118] - Batch 2 shapes:
+2025-04-21 14:40:41,754 - INFO - [test_data_collator.py:130] - name: <class 'list'>
+2025-04-21 14:40:41,755 - INFO - [test_data_collator.py:121] - keypoints: torch.Size([2, 127, 543, 2])
+2025-04-21 14:40:41,755 - INFO - [test_data_collator.py:121] - valid_len_in: torch.Size([2, 31])
+2025-04-21 14:40:41,756 - INFO - [test_data_collator.py:121] - mask: torch.Size([2, 127])
+2025-04-21 14:40:41,756 - INFO - [test_data_collator.py:121] - mask_head: torch.Size([2, 31])
+2025-04-21 14:40:41,757 - INFO - [test_data_collator.py:121] - gloss_labels: torch.Size([2, 9])
+2025-04-21 14:40:41,757 - INFO - [test_data_collator.py:121] - gloss_lengths: torch.Size([2])
+2025-04-21 14:40:41,757 - INFO - [test_data_collator.py:130] - gloss_input: <class 'list'>
+2025-04-21 14:40:41,758 - INFO - [test_data_collator.py:130] - text_input: <class 'list'>
+2025-04-21 14:40:41,759 - INFO - [test_data_collator.py:175] - Successfully tested collator with batch_size=2
+2025-04-21 14:40:41,759 - INFO - [test_data_collator.py:104] - Testing DataLoader with batch size 4
+2025-04-21 14:40:41,981 - INFO - [test_data_collator.py:108] - Testing batch 1
+2025-04-21 14:40:41,983 - INFO - [test_data_collator.py:118] - Batch 1 shapes:
+2025-04-21 14:40:41,986 - INFO - [test_data_collator.py:130] - name: <class 'list'>
+2025-04-21 14:40:41,998 - INFO - [test_data_collator.py:121] - keypoints: torch.Size([4, 100, 543, 2])
+2025-04-21 14:40:42,013 - INFO - [test_data_collator.py:121] - valid_len_in: torch.Size([4, 25])
+2025-04-21 14:40:42,032 - INFO - [test_data_collator.py:121] - mask: torch.Size([4, 100])
+2025-04-21 14:40:42,038 - INFO - [test_data_collator.py:121] - mask_head: torch.Size([4, 25])
+2025-04-21 14:40:42,047 - INFO - [test_data_collator.py:121] - gloss_labels: torch.Size([4, 9])
+2025-04-21 14:40:42,051 - INFO - [test_data_collator.py:121] - gloss_lengths: torch.Size([4])
+2025-04-21 14:40:42,055 - INFO - [test_data_collator.py:130] - gloss_input: <class 'list'>
+2025-04-21 14:40:42,056 - INFO - [test_data_collator.py:130] - text_input: <class 'list'>
+2025-04-21 14:40:42,441 - INFO - [test_data_collator.py:108] - Testing batch 2
+2025-04-21 14:40:42,450 - INFO - [test_data_collator.py:118] - Batch 2 shapes:
+2025-04-21 14:40:42,463 - INFO - [test_data_collator.py:130] - name: <class 'list'>
+2025-04-21 14:40:42,471 - INFO - [test_data_collator.py:121] - keypoints: torch.Size([4, 121, 543, 2])
+2025-04-21 14:40:42,481 - INFO - [test_data_collator.py:121] - valid_len_in: torch.Size([4, 30])
+2025-04-21 14:40:42,487 - INFO - [test_data_collator.py:121] - mask: torch.Size([4, 121])
+2025-04-21 14:40:42,498 - INFO - [test_data_collator.py:121] - mask_head: torch.Size([4, 30])
+2025-04-21 14:40:42,500 - INFO - [test_data_collator.py:121] - gloss_labels: torch.Size([4, 16])
+2025-04-21 14:40:42,503 - INFO - [test_data_collator.py:121] - gloss_lengths: torch.Size([4])
+2025-04-21 14:40:42,507 - INFO - [test_data_collator.py:130] - gloss_input: <class 'list'>
+2025-04-21 14:40:42,508 - INFO - [test_data_collator.py:130] - text_input: <class 'list'>
+2025-04-21 14:40:42,513 - INFO - [test_data_collator.py:175] - Successfully tested collator with batch_size=4
+2025-04-21 14:40:42,525 - INFO - [test_data_collator.py:104] - Testing DataLoader with batch size 8
+2025-04-21 14:40:42,928 - INFO - [test_data_collator.py:108] - Testing batch 1
+2025-04-21 14:40:42,962 - INFO - [test_data_collator.py:118] - Batch 1 shapes:
+2025-04-21 14:40:42,981 - INFO - [test_data_collator.py:130] - name: <class 'list'>
+2025-04-21 14:40:42,987 - INFO - [test_data_collator.py:121] - keypoints: torch.Size([8, 126, 543, 2])
+2025-04-21 14:40:42,990 - INFO - [test_data_collator.py:121] - valid_len_in: torch.Size([8, 31])
+2025-04-21 14:40:42,991 - INFO - [test_data_collator.py:121] - mask: torch.Size([8, 126])
+2025-04-21 14:40:43,001 - INFO - [test_data_collator.py:121] - mask_head: torch.Size([8, 31])
+2025-04-21 14:40:43,004 - INFO - [test_data_collator.py:121] - gloss_labels: torch.Size([8, 16])
+2025-04-21 14:40:43,016 - INFO - [test_data_collator.py:121] - gloss_lengths: torch.Size([8])
+2025-04-21 14:40:43,020 - INFO - [test_data_collator.py:130] - gloss_input: <class 'list'>
+2025-04-21 14:40:43,023 - INFO - [test_data_collator.py:130] - text_input: <class 'list'>
+2025-04-21 14:40:43,824 - INFO - [test_data_collator.py:108] - Testing batch 2
+2025-04-21 14:40:43,968 - INFO - [test_data_collator.py:118] - Batch 2 shapes:
+2025-04-21 14:40:44,070 - INFO - [test_data_collator.py:130] - name: <class 'list'>
+2025-04-21 14:40:44,156 - INFO - [test_data_collator.py:121] - keypoints: torch.Size([8, 128, 543, 2])
+2025-04-21 14:40:44,176 - INFO - [test_data_collator.py:121] - valid_len_in: torch.Size([8, 32])
+2025-04-21 14:40:44,184 - INFO - [test_data_collator.py:121] - mask: torch.Size([8, 128])
+2025-04-21 14:40:44,197 - INFO - [test_data_collator.py:121] - mask_head: torch.Size([8, 32])
+2025-04-21 14:40:44,213 - INFO - [test_data_collator.py:121] - gloss_labels: torch.Size([8, 15])
+2025-04-21 14:40:44,217 - INFO - [test_data_collator.py:121] - gloss_lengths: torch.Size([8])
+2025-04-21 14:40:44,219 - INFO - [test_data_collator.py:130] - gloss_input: <class 'list'>
+2025-04-21 14:40:44,220 - INFO - [test_data_collator.py:130] - text_input: <class 'list'>
+2025-04-21 14:40:44,223 - INFO - [test_data_collator.py:175] - Successfully tested collator with batch_size=8
+2025-04-21 14:40:44,223 - INFO - [test_data_collator.py:153] - 
 Testing dev split...
-2025-04-14 15:45:27,762 - INFO - [test_data_collator.py:156] - Dataset size: 519
-2025-04-14 15:45:27,762 - INFO - [test_data_collator.py:97] - Testing DataLoader with batch size 1
-2025-04-14 15:45:27,795 - INFO - [test_data_collator.py:101] - Testing batch 1
-2025-04-14 15:45:27,795 - INFO - [test_data_collator.py:111] - Batch 1 shapes:
-2025-04-14 15:45:27,796 - INFO - [test_data_collator.py:123] - name: <class 'list'>
-2025-04-14 15:45:27,796 - INFO - [test_data_collator.py:114] - keypoints: torch.Size([1, 128, 543, 2])
-2025-04-14 15:45:27,796 - INFO - [test_data_collator.py:114] - valid_len_in: torch.Size([1])
-2025-04-14 15:45:27,796 - INFO - [test_data_collator.py:114] - mask: torch.Size([1, 128])
-2025-04-14 15:45:27,797 - INFO - [test_data_collator.py:114] - mask_head: torch.Size([1, 32])
-2025-04-14 15:45:27,797 - INFO - [test_data_collator.py:114] - gloss_labels: torch.Size([1, 9])
-2025-04-14 15:45:27,797 - INFO - [test_data_collator.py:114] - gloss_lengths: torch.Size([1])
-2025-04-14 15:45:27,797 - INFO - [test_data_collator.py:123] - gloss_input: <class 'list'>
-2025-04-14 15:45:27,797 - INFO - [test_data_collator.py:123] - text_input: <class 'list'>
-2025-04-14 15:45:27,814 - INFO - [test_data_collator.py:101] - Testing batch 2
-2025-04-14 15:45:27,814 - INFO - [test_data_collator.py:111] - Batch 2 shapes:
-2025-04-14 15:45:27,814 - INFO - [test_data_collator.py:123] - name: <class 'list'>
-2025-04-14 15:45:27,814 - INFO - [test_data_collator.py:114] - keypoints: torch.Size([1, 66, 543, 2])
-2025-04-14 15:45:27,815 - INFO - [test_data_collator.py:114] - valid_len_in: torch.Size([1])
-2025-04-14 15:45:27,815 - INFO - [test_data_collator.py:114] - mask: torch.Size([1, 66])
-2025-04-14 15:45:27,815 - INFO - [test_data_collator.py:114] - mask_head: torch.Size([1, 17])
-2025-04-14 15:45:27,815 - INFO - [test_data_collator.py:114] - gloss_labels: torch.Size([1, 5])
-2025-04-14 15:45:27,815 - INFO - [test_data_collator.py:114] - gloss_lengths: torch.Size([1])
-2025-04-14 15:45:27,815 - INFO - [test_data_collator.py:123] - gloss_input: <class 'list'>
-2025-04-14 15:45:27,815 - INFO - [test_data_collator.py:123] - text_input: <class 'list'>
-2025-04-14 15:45:27,816 - INFO - [test_data_collator.py:168] - Successfully tested collator with batch_size=1
-2025-04-14 15:45:27,816 - INFO - [test_data_collator.py:97] - Testing DataLoader with batch size 2
-2025-04-14 15:45:27,850 - INFO - [test_data_collator.py:101] - Testing batch 1
-2025-04-14 15:45:27,850 - INFO - [test_data_collator.py:111] - Batch 1 shapes:
-2025-04-14 15:45:27,852 - INFO - [test_data_collator.py:123] - name: <class 'list'>
-2025-04-14 15:45:27,852 - INFO - [test_data_collator.py:114] - keypoints: torch.Size([2, 128, 543, 2])
-2025-04-14 15:45:27,852 - INFO - [test_data_collator.py:114] - valid_len_in: torch.Size([2])
-2025-04-14 15:45:27,852 - INFO - [test_data_collator.py:114] - mask: torch.Size([2, 128])
-2025-04-14 15:45:27,852 - INFO - [test_data_collator.py:114] - mask_head: torch.Size([2, 32])
-2025-04-14 15:45:27,852 - INFO - [test_data_collator.py:114] - gloss_labels: torch.Size([2, 9])
-2025-04-14 15:45:27,852 - INFO - [test_data_collator.py:114] - gloss_lengths: torch.Size([2])
-2025-04-14 15:45:27,852 - INFO - [test_data_collator.py:123] - gloss_input: <class 'list'>
-2025-04-14 15:45:27,852 - INFO - [test_data_collator.py:123] - text_input: <class 'list'>
-2025-04-14 15:45:27,900 - INFO - [test_data_collator.py:101] - Testing batch 2
-2025-04-14 15:45:27,900 - INFO - [test_data_collator.py:111] - Batch 2 shapes:
-2025-04-14 15:45:27,901 - INFO - [test_data_collator.py:123] - name: <class 'list'>
-2025-04-14 15:45:27,901 - INFO - [test_data_collator.py:114] - keypoints: torch.Size([2, 128, 543, 2])
-2025-04-14 15:45:27,902 - INFO - [test_data_collator.py:114] - valid_len_in: torch.Size([2])
-2025-04-14 15:45:27,902 - INFO - [test_data_collator.py:114] - mask: torch.Size([2, 128])
-2025-04-14 15:45:27,902 - INFO - [test_data_collator.py:114] - mask_head: torch.Size([2, 32])
-2025-04-14 15:45:27,902 - INFO - [test_data_collator.py:114] - gloss_labels: torch.Size([2, 9])
-2025-04-14 15:45:27,902 - INFO - [test_data_collator.py:114] - gloss_lengths: torch.Size([2])
-2025-04-14 15:45:27,903 - INFO - [test_data_collator.py:123] - gloss_input: <class 'list'>
-2025-04-14 15:45:27,903 - INFO - [test_data_collator.py:123] - text_input: <class 'list'>
-2025-04-14 15:45:27,903 - INFO - [test_data_collator.py:168] - Successfully tested collator with batch_size=2
-2025-04-14 15:45:27,903 - INFO - [test_data_collator.py:97] - Testing DataLoader with batch size 4
-2025-04-14 15:45:27,978 - INFO - [test_data_collator.py:101] - Testing batch 1
-2025-04-14 15:45:27,978 - INFO - [test_data_collator.py:111] - Batch 1 shapes:
-2025-04-14 15:45:27,978 - INFO - [test_data_collator.py:123] - name: <class 'list'>
-2025-04-14 15:45:27,978 - INFO - [test_data_collator.py:114] - keypoints: torch.Size([4, 128, 543, 2])
-2025-04-14 15:45:27,979 - INFO - [test_data_collator.py:114] - valid_len_in: torch.Size([4])
-2025-04-14 15:45:27,979 - INFO - [test_data_collator.py:114] - mask: torch.Size([4, 128])
-2025-04-14 15:45:27,979 - INFO - [test_data_collator.py:114] - mask_head: torch.Size([4, 32])
-2025-04-14 15:45:27,979 - INFO - [test_data_collator.py:114] - gloss_labels: torch.Size([4, 9])
-2025-04-14 15:45:27,979 - INFO - [test_data_collator.py:114] - gloss_lengths: torch.Size([4])
-2025-04-14 15:45:27,980 - INFO - [test_data_collator.py:123] - gloss_input: <class 'list'>
-2025-04-14 15:45:27,980 - INFO - [test_data_collator.py:123] - text_input: <class 'list'>
-2025-04-14 15:45:28,096 - INFO - [test_data_collator.py:101] - Testing batch 2
-2025-04-14 15:45:28,096 - INFO - [test_data_collator.py:111] - Batch 2 shapes:
-2025-04-14 15:45:28,097 - INFO - [test_data_collator.py:123] - name: <class 'list'>
-2025-04-14 15:45:28,097 - INFO - [test_data_collator.py:114] - keypoints: torch.Size([4, 128, 543, 2])
-2025-04-14 15:45:28,097 - INFO - [test_data_collator.py:114] - valid_len_in: torch.Size([4])
-2025-04-14 15:45:28,097 - INFO - [test_data_collator.py:114] - mask: torch.Size([4, 128])
-2025-04-14 15:45:28,097 - INFO - [test_data_collator.py:114] - mask_head: torch.Size([4, 32])
-2025-04-14 15:45:28,098 - INFO - [test_data_collator.py:114] - gloss_labels: torch.Size([4, 9])
-2025-04-14 15:45:28,098 - INFO - [test_data_collator.py:114] - gloss_lengths: torch.Size([4])
-2025-04-14 15:45:28,098 - INFO - [test_data_collator.py:123] - gloss_input: <class 'list'>
-2025-04-14 15:45:28,098 - INFO - [test_data_collator.py:123] - text_input: <class 'list'>
-2025-04-14 15:45:28,098 - INFO - [test_data_collator.py:168] - Successfully tested collator with batch_size=4
-2025-04-14 15:45:28,099 - INFO - [test_data_collator.py:97] - Testing DataLoader with batch size 8
-2025-04-14 15:45:28,271 - INFO - [test_data_collator.py:101] - Testing batch 1
-2025-04-14 15:45:28,271 - INFO - [test_data_collator.py:111] - Batch 1 shapes:
-2025-04-14 15:45:28,271 - INFO - [test_data_collator.py:123] - name: <class 'list'>
-2025-04-14 15:45:28,271 - INFO - [test_data_collator.py:114] - keypoints: torch.Size([8, 128, 543, 2])
-2025-04-14 15:45:28,271 - INFO - [test_data_collator.py:114] - valid_len_in: torch.Size([8])
-2025-04-14 15:45:28,276 - INFO - [test_data_collator.py:114] - mask: torch.Size([8, 128])
-2025-04-14 15:45:28,277 - INFO - [test_data_collator.py:114] - mask_head: torch.Size([8, 32])
-2025-04-14 15:45:28,277 - INFO - [test_data_collator.py:114] - gloss_labels: torch.Size([8, 9])
-2025-04-14 15:45:28,277 - INFO - [test_data_collator.py:114] - gloss_lengths: torch.Size([8])
-2025-04-14 15:45:28,277 - INFO - [test_data_collator.py:123] - gloss_input: <class 'list'>
-2025-04-14 15:45:28,277 - INFO - [test_data_collator.py:123] - text_input: <class 'list'>
-2025-04-14 15:45:28,516 - INFO - [test_data_collator.py:101] - Testing batch 2
-2025-04-14 15:45:28,516 - INFO - [test_data_collator.py:111] - Batch 2 shapes:
-2025-04-14 15:45:28,517 - INFO - [test_data_collator.py:123] - name: <class 'list'>
-2025-04-14 15:45:28,517 - INFO - [test_data_collator.py:114] - keypoints: torch.Size([8, 128, 543, 2])
-2025-04-14 15:45:28,517 - INFO - [test_data_collator.py:114] - valid_len_in: torch.Size([8])
-2025-04-14 15:45:28,517 - INFO - [test_data_collator.py:114] - mask: torch.Size([8, 128])
-2025-04-14 15:45:28,518 - INFO - [test_data_collator.py:114] - mask_head: torch.Size([8, 32])
-2025-04-14 15:45:28,518 - INFO - [test_data_collator.py:114] - gloss_labels: torch.Size([8, 13])
-2025-04-14 15:45:28,518 - INFO - [test_data_collator.py:114] - gloss_lengths: torch.Size([8])
-2025-04-14 15:45:28,518 - INFO - [test_data_collator.py:123] - gloss_input: <class 'list'>
-2025-04-14 15:45:28,518 - INFO - [test_data_collator.py:123] - text_input: <class 'list'>
-2025-04-14 15:45:28,519 - INFO - [test_data_collator.py:168] - Successfully tested collator with batch_size=8
-2025-04-14 15:45:28,519 - INFO - [test_data_collator.py:146] - 
+2025-04-21 14:40:44,254 - INFO - [test_data_collator.py:163] - Dataset size: 519
+2025-04-21 14:40:44,256 - INFO - [test_data_collator.py:104] - Testing DataLoader with batch size 1
+2025-04-21 14:40:44,298 - INFO - [test_data_collator.py:108] - Testing batch 1
+2025-04-21 14:40:44,302 - INFO - [test_data_collator.py:118] - Batch 1 shapes:
+2025-04-21 14:40:44,351 - INFO - [test_data_collator.py:130] - name: <class 'list'>
+2025-04-21 14:40:44,369 - INFO - [test_data_collator.py:121] - keypoints: torch.Size([1, 36, 543, 2])
+2025-04-21 14:40:44,369 - INFO - [test_data_collator.py:121] - valid_len_in: torch.Size([1, 9])
+2025-04-21 14:40:44,372 - INFO - [test_data_collator.py:121] - mask: torch.Size([1, 36])
+2025-04-21 14:40:44,382 - INFO - [test_data_collator.py:121] - mask_head: torch.Size([1, 9])
+2025-04-21 14:40:44,386 - INFO - [test_data_collator.py:121] - gloss_labels: torch.Size([1, 3])
+2025-04-21 14:40:44,389 - INFO - [test_data_collator.py:121] - gloss_lengths: torch.Size([1])
+2025-04-21 14:40:44,389 - INFO - [test_data_collator.py:130] - gloss_input: <class 'list'>
+2025-04-21 14:40:44,389 - INFO - [test_data_collator.py:130] - text_input: <class 'list'>
+2025-04-21 14:40:44,466 - INFO - [test_data_collator.py:108] - Testing batch 2
+2025-04-21 14:40:44,471 - INFO - [test_data_collator.py:118] - Batch 2 shapes:
+2025-04-21 14:40:44,483 - INFO - [test_data_collator.py:130] - name: <class 'list'>
+2025-04-21 14:40:44,484 - INFO - [test_data_collator.py:121] - keypoints: torch.Size([1, 77, 543, 2])
+2025-04-21 14:40:44,485 - INFO - [test_data_collator.py:121] - valid_len_in: torch.Size([1, 19])
+2025-04-21 14:40:44,505 - INFO - [test_data_collator.py:121] - mask: torch.Size([1, 77])
+2025-04-21 14:40:44,512 - INFO - [test_data_collator.py:121] - mask_head: torch.Size([1, 19])
+2025-04-21 14:40:44,519 - INFO - [test_data_collator.py:121] - gloss_labels: torch.Size([1, 6])
+2025-04-21 14:40:44,522 - INFO - [test_data_collator.py:121] - gloss_lengths: torch.Size([1])
+2025-04-21 14:40:44,523 - INFO - [test_data_collator.py:130] - gloss_input: <class 'list'>
+2025-04-21 14:40:44,523 - INFO - [test_data_collator.py:130] - text_input: <class 'list'>
+2025-04-21 14:40:44,525 - INFO - [test_data_collator.py:175] - Successfully tested collator with batch_size=1
+2025-04-21 14:40:44,525 - INFO - [test_data_collator.py:104] - Testing DataLoader with batch size 2
+2025-04-21 14:40:44,572 - INFO - [test_data_collator.py:108] - Testing batch 1
+2025-04-21 14:40:44,576 - INFO - [test_data_collator.py:118] - Batch 1 shapes:
+2025-04-21 14:40:44,587 - INFO - [test_data_collator.py:130] - name: <class 'list'>
+2025-04-21 14:40:44,592 - INFO - [test_data_collator.py:121] - keypoints: torch.Size([2, 77, 543, 2])
+2025-04-21 14:40:44,613 - INFO - [test_data_collator.py:121] - valid_len_in: torch.Size([2, 19])
+2025-04-21 14:40:44,623 - INFO - [test_data_collator.py:121] - mask: torch.Size([2, 77])
+2025-04-21 14:40:44,631 - INFO - [test_data_collator.py:121] - mask_head: torch.Size([2, 19])
+2025-04-21 14:40:44,641 - INFO - [test_data_collator.py:121] - gloss_labels: torch.Size([2, 6])
+2025-04-21 14:40:44,642 - INFO - [test_data_collator.py:121] - gloss_lengths: torch.Size([2])
+2025-04-21 14:40:44,643 - INFO - [test_data_collator.py:130] - gloss_input: <class 'list'>
+2025-04-21 14:40:44,645 - INFO - [test_data_collator.py:130] - text_input: <class 'list'>
+2025-04-21 14:40:44,753 - INFO - [test_data_collator.py:108] - Testing batch 2
+2025-04-21 14:40:44,771 - INFO - [test_data_collator.py:118] - Batch 2 shapes:
+2025-04-21 14:40:44,783 - INFO - [test_data_collator.py:130] - name: <class 'list'>
+2025-04-21 14:40:44,785 - INFO - [test_data_collator.py:121] - keypoints: torch.Size([2, 65, 543, 2])
+2025-04-21 14:40:44,790 - INFO - [test_data_collator.py:121] - valid_len_in: torch.Size([2, 16])
+2025-04-21 14:40:44,799 - INFO - [test_data_collator.py:121] - mask: torch.Size([2, 65])
+2025-04-21 14:40:44,805 - INFO - [test_data_collator.py:121] - mask_head: torch.Size([2, 16])
+2025-04-21 14:40:44,808 - INFO - [test_data_collator.py:121] - gloss_labels: torch.Size([2, 5])
+2025-04-21 14:40:44,815 - INFO - [test_data_collator.py:121] - gloss_lengths: torch.Size([2])
+2025-04-21 14:40:44,820 - INFO - [test_data_collator.py:130] - gloss_input: <class 'list'>
+2025-04-21 14:40:44,823 - INFO - [test_data_collator.py:130] - text_input: <class 'list'>
+2025-04-21 14:40:44,824 - INFO - [test_data_collator.py:175] - Successfully tested collator with batch_size=2
+2025-04-21 14:40:44,827 - INFO - [test_data_collator.py:104] - Testing DataLoader with batch size 4
+2025-04-21 14:40:44,928 - INFO - [test_data_collator.py:108] - Testing batch 1
+2025-04-21 14:40:44,956 - INFO - [test_data_collator.py:118] - Batch 1 shapes:
+2025-04-21 14:40:44,964 - INFO - [test_data_collator.py:130] - name: <class 'list'>
+2025-04-21 14:40:44,967 - INFO - [test_data_collator.py:121] - keypoints: torch.Size([4, 77, 543, 2])
+2025-04-21 14:40:44,977 - INFO - [test_data_collator.py:121] - valid_len_in: torch.Size([4, 19])
+2025-04-21 14:40:44,987 - INFO - [test_data_collator.py:121] - mask: torch.Size([4, 77])
+2025-04-21 14:40:44,992 - INFO - [test_data_collator.py:121] - mask_head: torch.Size([4, 19])
+2025-04-21 14:40:44,992 - INFO - [test_data_collator.py:121] - gloss_labels: torch.Size([4, 6])
+2025-04-21 14:40:44,993 - INFO - [test_data_collator.py:121] - gloss_lengths: torch.Size([4])
+2025-04-21 14:40:44,995 - INFO - [test_data_collator.py:130] - gloss_input: <class 'list'>
+2025-04-21 14:40:44,997 - INFO - [test_data_collator.py:130] - text_input: <class 'list'>
+2025-04-21 14:40:45,329 - INFO - [test_data_collator.py:108] - Testing batch 2
+2025-04-21 14:40:45,349 - INFO - [test_data_collator.py:118] - Batch 2 shapes:
+2025-04-21 14:40:45,383 - INFO - [test_data_collator.py:130] - name: <class 'list'>
+2025-04-21 14:40:45,397 - INFO - [test_data_collator.py:121] - keypoints: torch.Size([4, 109, 543, 2])
+2025-04-21 14:40:45,433 - INFO - [test_data_collator.py:121] - valid_len_in: torch.Size([4, 27])
+2025-04-21 14:40:45,451 - INFO - [test_data_collator.py:121] - mask: torch.Size([4, 109])
+2025-04-21 14:40:45,535 - INFO - [test_data_collator.py:121] - mask_head: torch.Size([4, 27])
+2025-04-21 14:40:45,617 - INFO - [test_data_collator.py:121] - gloss_labels: torch.Size([4, 8])
+2025-04-21 14:40:45,675 - INFO - [test_data_collator.py:121] - gloss_lengths: torch.Size([4])
+2025-04-21 14:40:45,686 - INFO - [test_data_collator.py:130] - gloss_input: <class 'list'>
+2025-04-21 14:40:45,692 - INFO - [test_data_collator.py:130] - text_input: <class 'list'>
+2025-04-21 14:40:45,693 - INFO - [test_data_collator.py:175] - Successfully tested collator with batch_size=4
+2025-04-21 14:40:45,696 - INFO - [test_data_collator.py:104] - Testing DataLoader with batch size 8
+2025-04-21 14:40:46,250 - INFO - [test_data_collator.py:108] - Testing batch 1
+2025-04-21 14:40:46,273 - INFO - [test_data_collator.py:118] - Batch 1 shapes:
+2025-04-21 14:40:46,293 - INFO - [test_data_collator.py:130] - name: <class 'list'>
+2025-04-21 14:40:46,309 - INFO - [test_data_collator.py:121] - keypoints: torch.Size([8, 109, 543, 2])
+2025-04-21 14:40:46,315 - INFO - [test_data_collator.py:121] - valid_len_in: torch.Size([8, 27])
+2025-04-21 14:40:46,316 - INFO - [test_data_collator.py:121] - mask: torch.Size([8, 109])
+2025-04-21 14:40:46,319 - INFO - [test_data_collator.py:121] - mask_head: torch.Size([8, 27])
+2025-04-21 14:40:46,321 - INFO - [test_data_collator.py:121] - gloss_labels: torch.Size([8, 8])
+2025-04-21 14:40:46,330 - INFO - [test_data_collator.py:121] - gloss_lengths: torch.Size([8])
+2025-04-21 14:40:46,331 - INFO - [test_data_collator.py:130] - gloss_input: <class 'list'>
+2025-04-21 14:40:46,332 - INFO - [test_data_collator.py:130] - text_input: <class 'list'>
+2025-04-21 14:40:46,958 - INFO - [test_data_collator.py:108] - Testing batch 2
+2025-04-21 14:40:46,959 - INFO - [test_data_collator.py:118] - Batch 2 shapes:
+2025-04-21 14:40:46,962 - INFO - [test_data_collator.py:130] - name: <class 'list'>
+2025-04-21 14:40:46,962 - INFO - [test_data_collator.py:121] - keypoints: torch.Size([8, 128, 543, 2])
+2025-04-21 14:40:46,963 - INFO - [test_data_collator.py:121] - valid_len_in: torch.Size([8, 32])
+2025-04-21 14:40:46,963 - INFO - [test_data_collator.py:121] - mask: torch.Size([8, 128])
+2025-04-21 14:40:46,965 - INFO - [test_data_collator.py:121] - mask_head: torch.Size([8, 32])
+2025-04-21 14:40:46,965 - INFO - [test_data_collator.py:121] - gloss_labels: torch.Size([8, 15])
+2025-04-21 14:40:46,966 - INFO - [test_data_collator.py:121] - gloss_lengths: torch.Size([8])
+2025-04-21 14:40:46,966 - INFO - [test_data_collator.py:130] - gloss_input: <class 'list'>
+2025-04-21 14:40:46,966 - INFO - [test_data_collator.py:130] - text_input: <class 'list'>
+2025-04-21 14:40:46,966 - INFO - [test_data_collator.py:175] - Successfully tested collator with batch_size=8
+2025-04-21 14:40:46,967 - INFO - [test_data_collator.py:153] - 
 Testing test split...
-2025-04-14 15:45:28,577 - INFO - [test_data_collator.py:156] - Dataset size: 642
-2025-04-14 15:45:28,578 - INFO - [test_data_collator.py:97] - Testing DataLoader with batch size 1
-2025-04-14 15:45:28,618 - INFO - [test_data_collator.py:101] - Testing batch 1
-2025-04-14 15:45:28,618 - INFO - [test_data_collator.py:111] - Batch 1 shapes:
-2025-04-14 15:45:28,618 - INFO - [test_data_collator.py:123] - name: <class 'list'>
-2025-04-14 15:45:28,619 - INFO - [test_data_collator.py:114] - keypoints: torch.Size([1, 128, 543, 2])
-2025-04-14 15:45:28,619 - INFO - [test_data_collator.py:114] - valid_len_in: torch.Size([1])
-2025-04-14 15:45:28,619 - INFO - [test_data_collator.py:114] - mask: torch.Size([1, 128])
-2025-04-14 15:45:28,619 - INFO - [test_data_collator.py:114] - mask_head: torch.Size([1, 32])
-2025-04-14 15:45:28,620 - INFO - [test_data_collator.py:114] - gloss_labels: torch.Size([1, 8])
-2025-04-14 15:45:28,620 - INFO - [test_data_collator.py:114] - gloss_lengths: torch.Size([1])
-2025-04-14 15:45:28,620 - INFO - [test_data_collator.py:123] - gloss_input: <class 'list'>
-2025-04-14 15:45:28,620 - INFO - [test_data_collator.py:123] - text_input: <class 'list'>
-2025-04-14 15:45:28,643 - INFO - [test_data_collator.py:101] - Testing batch 2
-2025-04-14 15:45:28,644 - INFO - [test_data_collator.py:111] - Batch 2 shapes:
-2025-04-14 15:45:28,644 - INFO - [test_data_collator.py:123] - name: <class 'list'>
-2025-04-14 15:45:28,645 - INFO - [test_data_collator.py:114] - keypoints: torch.Size([1, 68, 543, 2])
-2025-04-14 15:45:28,645 - INFO - [test_data_collator.py:114] - valid_len_in: torch.Size([1])
-2025-04-14 15:45:28,645 - INFO - [test_data_collator.py:114] - mask: torch.Size([1, 68])
-2025-04-14 15:45:28,645 - INFO - [test_data_collator.py:114] - mask_head: torch.Size([1, 17])
-2025-04-14 15:45:28,646 - INFO - [test_data_collator.py:114] - gloss_labels: torch.Size([1, 4])
-2025-04-14 15:45:28,646 - INFO - [test_data_collator.py:114] - gloss_lengths: torch.Size([1])
-2025-04-14 15:45:28,646 - INFO - [test_data_collator.py:123] - gloss_input: <class 'list'>
-2025-04-14 15:45:28,646 - INFO - [test_data_collator.py:123] - text_input: <class 'list'>
-2025-04-14 15:45:28,646 - INFO - [test_data_collator.py:168] - Successfully tested collator with batch_size=1
-2025-04-14 15:45:28,652 - INFO - [test_data_collator.py:97] - Testing DataLoader with batch size 2
-2025-04-14 15:45:28,700 - INFO - [test_data_collator.py:101] - Testing batch 1
-2025-04-14 15:45:28,700 - INFO - [test_data_collator.py:111] - Batch 1 shapes:
-2025-04-14 15:45:28,700 - INFO - [test_data_collator.py:123] - name: <class 'list'>
-2025-04-14 15:45:28,702 - INFO - [test_data_collator.py:114] - keypoints: torch.Size([2, 128, 543, 2])
-2025-04-14 15:45:28,702 - INFO - [test_data_collator.py:114] - valid_len_in: torch.Size([2])
-2025-04-14 15:45:28,702 - INFO - [test_data_collator.py:114] - mask: torch.Size([2, 128])
-2025-04-14 15:45:28,702 - INFO - [test_data_collator.py:114] - mask_head: torch.Size([2, 32])
-2025-04-14 15:45:28,702 - INFO - [test_data_collator.py:114] - gloss_labels: torch.Size([2, 8])
-2025-04-14 15:45:28,703 - INFO - [test_data_collator.py:114] - gloss_lengths: torch.Size([2])
-2025-04-14 15:45:28,703 - INFO - [test_data_collator.py:123] - gloss_input: <class 'list'>
-2025-04-14 15:45:28,703 - INFO - [test_data_collator.py:123] - text_input: <class 'list'>
-2025-04-14 15:45:28,756 - INFO - [test_data_collator.py:101] - Testing batch 2
-2025-04-14 15:45:28,756 - INFO - [test_data_collator.py:111] - Batch 2 shapes:
-2025-04-14 15:45:28,756 - INFO - [test_data_collator.py:123] - name: <class 'list'>
-2025-04-14 15:45:28,756 - INFO - [test_data_collator.py:114] - keypoints: torch.Size([2, 128, 543, 2])
-2025-04-14 15:45:28,757 - INFO - [test_data_collator.py:114] - valid_len_in: torch.Size([2])
-2025-04-14 15:45:28,757 - INFO - [test_data_collator.py:114] - mask: torch.Size([2, 128])
-2025-04-14 15:45:28,757 - INFO - [test_data_collator.py:114] - mask_head: torch.Size([2, 32])
-2025-04-14 15:45:28,757 - INFO - [test_data_collator.py:114] - gloss_labels: torch.Size([2, 8])
-2025-04-14 15:45:28,757 - INFO - [test_data_collator.py:114] - gloss_lengths: torch.Size([2])
-2025-04-14 15:45:28,758 - INFO - [test_data_collator.py:123] - gloss_input: <class 'list'>
-2025-04-14 15:45:28,758 - INFO - [test_data_collator.py:123] - text_input: <class 'list'>
-2025-04-14 15:45:28,758 - INFO - [test_data_collator.py:168] - Successfully tested collator with batch_size=2
-2025-04-14 15:45:28,758 - INFO - [test_data_collator.py:97] - Testing DataLoader with batch size 4
-2025-04-14 15:45:28,850 - INFO - [test_data_collator.py:101] - Testing batch 1
-2025-04-14 15:45:28,850 - INFO - [test_data_collator.py:111] - Batch 1 shapes:
-2025-04-14 15:45:28,850 - INFO - [test_data_collator.py:123] - name: <class 'list'>
-2025-04-14 15:45:28,851 - INFO - [test_data_collator.py:114] - keypoints: torch.Size([4, 128, 543, 2])
-2025-04-14 15:45:28,851 - INFO - [test_data_collator.py:114] - valid_len_in: torch.Size([4])
-2025-04-14 15:45:28,851 - INFO - [test_data_collator.py:114] - mask: torch.Size([4, 128])
-2025-04-14 15:45:28,851 - INFO - [test_data_collator.py:114] - mask_head: torch.Size([4, 32])
-2025-04-14 15:45:28,851 - INFO - [test_data_collator.py:114] - gloss_labels: torch.Size([4, 8])
-2025-04-14 15:45:28,851 - INFO - [test_data_collator.py:114] - gloss_lengths: torch.Size([4])
-2025-04-14 15:45:28,851 - INFO - [test_data_collator.py:123] - gloss_input: <class 'list'>
-2025-04-14 15:45:28,852 - INFO - [test_data_collator.py:123] - text_input: <class 'list'>
-2025-04-14 15:45:29,010 - INFO - [test_data_collator.py:101] - Testing batch 2
-2025-04-14 15:45:29,010 - INFO - [test_data_collator.py:111] - Batch 2 shapes:
-2025-04-14 15:45:29,011 - INFO - [test_data_collator.py:123] - name: <class 'list'>
-2025-04-14 15:45:29,011 - INFO - [test_data_collator.py:114] - keypoints: torch.Size([4, 128, 543, 2])
-2025-04-14 15:45:29,012 - INFO - [test_data_collator.py:114] - valid_len_in: torch.Size([4])
-2025-04-14 15:45:29,012 - INFO - [test_data_collator.py:114] - mask: torch.Size([4, 128])
-2025-04-14 15:45:29,012 - INFO - [test_data_collator.py:114] - mask_head: torch.Size([4, 32])
-2025-04-14 15:45:29,012 - INFO - [test_data_collator.py:114] - gloss_labels: torch.Size([4, 12])
-2025-04-14 15:45:29,012 - INFO - [test_data_collator.py:114] - gloss_lengths: torch.Size([4])
-2025-04-14 15:45:29,012 - INFO - [test_data_collator.py:123] - gloss_input: <class 'list'>
-2025-04-14 15:45:29,013 - INFO - [test_data_collator.py:123] - text_input: <class 'list'>
-2025-04-14 15:45:29,013 - INFO - [test_data_collator.py:168] - Successfully tested collator with batch_size=4
-2025-04-14 15:45:29,013 - INFO - [test_data_collator.py:97] - Testing DataLoader with batch size 8
-2025-04-14 15:45:29,285 - INFO - [test_data_collator.py:101] - Testing batch 1
-2025-04-14 15:45:29,286 - INFO - [test_data_collator.py:111] - Batch 1 shapes:
-2025-04-14 15:45:29,287 - INFO - [test_data_collator.py:123] - name: <class 'list'>
-2025-04-14 15:45:29,287 - INFO - [test_data_collator.py:114] - keypoints: torch.Size([8, 128, 543, 2])
-2025-04-14 15:45:29,287 - INFO - [test_data_collator.py:114] - valid_len_in: torch.Size([8])
-2025-04-14 15:45:29,288 - INFO - [test_data_collator.py:114] - mask: torch.Size([8, 128])
-2025-04-14 15:45:29,288 - INFO - [test_data_collator.py:114] - mask_head: torch.Size([8, 32])
-2025-04-14 15:45:29,288 - INFO - [test_data_collator.py:114] - gloss_labels: torch.Size([8, 12])
-2025-04-14 15:45:29,288 - INFO - [test_data_collator.py:114] - gloss_lengths: torch.Size([8])
-2025-04-14 15:45:29,288 - INFO - [test_data_collator.py:123] - gloss_input: <class 'list'>
-2025-04-14 15:45:29,289 - INFO - [test_data_collator.py:123] - text_input: <class 'list'>
-2025-04-14 15:45:29,519 - INFO - [test_data_collator.py:101] - Testing batch 2
-2025-04-14 15:45:29,520 - INFO - [test_data_collator.py:111] - Batch 2 shapes:
-2025-04-14 15:45:29,520 - INFO - [test_data_collator.py:123] - name: <class 'list'>
-2025-04-14 15:45:29,520 - INFO - [test_data_collator.py:114] - keypoints: torch.Size([8, 128, 543, 2])
-2025-04-14 15:45:29,520 - INFO - [test_data_collator.py:114] - valid_len_in: torch.Size([8])
-2025-04-14 15:45:29,520 - INFO - [test_data_collator.py:114] - mask: torch.Size([8, 128])
-2025-04-14 15:45:29,522 - INFO - [test_data_collator.py:114] - mask_head: torch.Size([8, 32])
-2025-04-14 15:45:29,522 - INFO - [test_data_collator.py:114] - gloss_labels: torch.Size([8, 13])
-2025-04-14 15:45:29,522 - INFO - [test_data_collator.py:114] - gloss_lengths: torch.Size([8])
-2025-04-14 15:45:29,522 - INFO - [test_data_collator.py:123] - gloss_input: <class 'list'>
-2025-04-14 15:45:29,522 - INFO - [test_data_collator.py:123] - text_input: <class 'list'>
-2025-04-14 15:45:29,522 - INFO - [test_data_collator.py:168] - Successfully tested collator with batch_size=8
+2025-04-21 14:40:46,994 - INFO - [test_data_collator.py:163] - Dataset size: 642
+2025-04-21 14:40:46,996 - INFO - [test_data_collator.py:104] - Testing DataLoader with batch size 1
+2025-04-21 14:40:47,053 - INFO - [test_data_collator.py:108] - Testing batch 1
+2025-04-21 14:40:47,054 - INFO - [test_data_collator.py:118] - Batch 1 shapes:
+2025-04-21 14:40:47,055 - INFO - [test_data_collator.py:130] - name: <class 'list'>
+2025-04-21 14:40:47,060 - INFO - [test_data_collator.py:121] - keypoints: torch.Size([1, 61, 543, 2])
+2025-04-21 14:40:47,063 - INFO - [test_data_collator.py:121] - valid_len_in: torch.Size([1, 15])
+2025-04-21 14:40:47,064 - INFO - [test_data_collator.py:121] - mask: torch.Size([1, 61])
+2025-04-21 14:40:47,065 - INFO - [test_data_collator.py:121] - mask_head: torch.Size([1, 15])
+2025-04-21 14:40:47,067 - INFO - [test_data_collator.py:121] - gloss_labels: torch.Size([1, 3])
+2025-04-21 14:40:47,068 - INFO - [test_data_collator.py:121] - gloss_lengths: torch.Size([1])
+2025-04-21 14:40:47,068 - INFO - [test_data_collator.py:130] - gloss_input: <class 'list'>
+2025-04-21 14:40:47,068 - INFO - [test_data_collator.py:130] - text_input: <class 'list'>
+2025-04-21 14:40:47,131 - INFO - [test_data_collator.py:108] - Testing batch 2
+2025-04-21 14:40:47,135 - INFO - [test_data_collator.py:118] - Batch 2 shapes:
+2025-04-21 14:40:47,136 - INFO - [test_data_collator.py:130] - name: <class 'list'>
+2025-04-21 14:40:47,137 - INFO - [test_data_collator.py:121] - keypoints: torch.Size([1, 106, 543, 2])
+2025-04-21 14:40:47,137 - INFO - [test_data_collator.py:121] - valid_len_in: torch.Size([1, 26])
+2025-04-21 14:40:47,137 - INFO - [test_data_collator.py:121] - mask: torch.Size([1, 106])
+2025-04-21 14:40:47,138 - INFO - [test_data_collator.py:121] - mask_head: torch.Size([1, 26])
+2025-04-21 14:40:47,139 - INFO - [test_data_collator.py:121] - gloss_labels: torch.Size([1, 8])
+2025-04-21 14:40:47,148 - INFO - [test_data_collator.py:121] - gloss_lengths: torch.Size([1])
+2025-04-21 14:40:47,151 - INFO - [test_data_collator.py:130] - gloss_input: <class 'list'>
+2025-04-21 14:40:47,152 - INFO - [test_data_collator.py:130] - text_input: <class 'list'>
+2025-04-21 14:40:47,153 - INFO - [test_data_collator.py:175] - Successfully tested collator with batch_size=1
+2025-04-21 14:40:47,153 - INFO - [test_data_collator.py:104] - Testing DataLoader with batch size 2
+2025-04-21 14:40:47,214 - INFO - [test_data_collator.py:108] - Testing batch 1
+2025-04-21 14:40:47,216 - INFO - [test_data_collator.py:118] - Batch 1 shapes:
+2025-04-21 14:40:47,216 - INFO - [test_data_collator.py:130] - name: <class 'list'>
+2025-04-21 14:40:47,217 - INFO - [test_data_collator.py:121] - keypoints: torch.Size([2, 106, 543, 2])
+2025-04-21 14:40:47,217 - INFO - [test_data_collator.py:121] - valid_len_in: torch.Size([2, 26])
+2025-04-21 14:40:47,218 - INFO - [test_data_collator.py:121] - mask: torch.Size([2, 106])
+2025-04-21 14:40:47,218 - INFO - [test_data_collator.py:121] - mask_head: torch.Size([2, 26])
+2025-04-21 14:40:47,218 - INFO - [test_data_collator.py:121] - gloss_labels: torch.Size([2, 8])
+2025-04-21 14:40:47,218 - INFO - [test_data_collator.py:121] - gloss_lengths: torch.Size([2])
+2025-04-21 14:40:47,218 - INFO - [test_data_collator.py:130] - gloss_input: <class 'list'>
+2025-04-21 14:40:47,218 - INFO - [test_data_collator.py:130] - text_input: <class 'list'>
+2025-04-21 14:40:47,341 - INFO - [test_data_collator.py:108] - Testing batch 2
+2025-04-21 14:40:47,344 - INFO - [test_data_collator.py:118] - Batch 2 shapes:
+2025-04-21 14:40:47,355 - INFO - [test_data_collator.py:130] - name: <class 'list'>
+2025-04-21 14:40:47,355 - INFO - [test_data_collator.py:121] - keypoints: torch.Size([2, 128, 543, 2])
+2025-04-21 14:40:47,356 - INFO - [test_data_collator.py:121] - valid_len_in: torch.Size([2, 32])
+2025-04-21 14:40:47,357 - INFO - [test_data_collator.py:121] - mask: torch.Size([2, 128])
+2025-04-21 14:40:47,357 - INFO - [test_data_collator.py:121] - mask_head: torch.Size([2, 32])
+2025-04-21 14:40:47,357 - INFO - [test_data_collator.py:121] - gloss_labels: torch.Size([2, 8])
+2025-04-21 14:40:47,358 - INFO - [test_data_collator.py:121] - gloss_lengths: torch.Size([2])
+2025-04-21 14:40:47,358 - INFO - [test_data_collator.py:130] - gloss_input: <class 'list'>
+2025-04-21 14:40:47,358 - INFO - [test_data_collator.py:130] - text_input: <class 'list'>
+2025-04-21 14:40:47,359 - INFO - [test_data_collator.py:175] - Successfully tested collator with batch_size=2
+2025-04-21 14:40:47,359 - INFO - [test_data_collator.py:104] - Testing DataLoader with batch size 4
+2025-04-21 14:40:47,502 - INFO - [test_data_collator.py:108] - Testing batch 1
+2025-04-21 14:40:47,502 - INFO - [test_data_collator.py:118] - Batch 1 shapes:
+2025-04-21 14:40:47,509 - INFO - [test_data_collator.py:130] - name: <class 'list'>
+2025-04-21 14:40:47,513 - INFO - [test_data_collator.py:121] - keypoints: torch.Size([4, 128, 543, 2])
+2025-04-21 14:40:47,515 - INFO - [test_data_collator.py:121] - valid_len_in: torch.Size([4, 32])
+2025-04-21 14:40:47,517 - INFO - [test_data_collator.py:121] - mask: torch.Size([4, 128])
+2025-04-21 14:40:47,518 - INFO - [test_data_collator.py:121] - mask_head: torch.Size([4, 32])
+2025-04-21 14:40:47,518 - INFO - [test_data_collator.py:121] - gloss_labels: torch.Size([4, 8])
+2025-04-21 14:40:47,520 - INFO - [test_data_collator.py:121] - gloss_lengths: torch.Size([4])
+2025-04-21 14:40:47,520 - INFO - [test_data_collator.py:130] - gloss_input: <class 'list'>
+2025-04-21 14:40:47,522 - INFO - [test_data_collator.py:130] - text_input: <class 'list'>
+2025-04-21 14:40:47,734 - INFO - [test_data_collator.py:108] - Testing batch 2
+2025-04-21 14:40:47,736 - INFO - [test_data_collator.py:118] - Batch 2 shapes:
+2025-04-21 14:40:47,738 - INFO - [test_data_collator.py:130] - name: <class 'list'>
+2025-04-21 14:40:47,742 - INFO - [test_data_collator.py:121] - keypoints: torch.Size([4, 101, 543, 2])
+2025-04-21 14:40:47,743 - INFO - [test_data_collator.py:121] - valid_len_in: torch.Size([4, 25])
+2025-04-21 14:40:47,743 - INFO - [test_data_collator.py:121] - mask: torch.Size([4, 101])
+2025-04-21 14:40:47,743 - INFO - [test_data_collator.py:121] - mask_head: torch.Size([4, 25])
+2025-04-21 14:40:47,745 - INFO - [test_data_collator.py:121] - gloss_labels: torch.Size([4, 8])
+2025-04-21 14:40:47,745 - INFO - [test_data_collator.py:121] - gloss_lengths: torch.Size([4])
+2025-04-21 14:40:47,745 - INFO - [test_data_collator.py:130] - gloss_input: <class 'list'>
+2025-04-21 14:40:47,745 - INFO - [test_data_collator.py:130] - text_input: <class 'list'>
+2025-04-21 14:40:47,746 - INFO - [test_data_collator.py:175] - Successfully tested collator with batch_size=4
+2025-04-21 14:40:47,746 - INFO - [test_data_collator.py:104] - Testing DataLoader with batch size 8
+2025-04-21 14:40:48,003 - INFO - [test_data_collator.py:108] - Testing batch 1
+2025-04-21 14:40:48,003 - INFO - [test_data_collator.py:118] - Batch 1 shapes:
+2025-04-21 14:40:48,003 - INFO - [test_data_collator.py:130] - name: <class 'list'>
+2025-04-21 14:40:48,003 - INFO - [test_data_collator.py:121] - keypoints: torch.Size([8, 128, 543, 2])
+2025-04-21 14:40:48,004 - INFO - [test_data_collator.py:121] - valid_len_in: torch.Size([8, 32])
+2025-04-21 14:40:48,005 - INFO - [test_data_collator.py:121] - mask: torch.Size([8, 128])
+2025-04-21 14:40:48,005 - INFO - [test_data_collator.py:121] - mask_head: torch.Size([8, 32])
+2025-04-21 14:40:48,005 - INFO - [test_data_collator.py:121] - gloss_labels: torch.Size([8, 8])
+2025-04-21 14:40:48,005 - INFO - [test_data_collator.py:121] - gloss_lengths: torch.Size([8])
+2025-04-21 14:40:48,005 - INFO - [test_data_collator.py:130] - gloss_input: <class 'list'>
+2025-04-21 14:40:48,005 - INFO - [test_data_collator.py:130] - text_input: <class 'list'>
+2025-04-21 14:40:48,383 - INFO - [test_data_collator.py:108] - Testing batch 2
+2025-04-21 14:40:48,383 - INFO - [test_data_collator.py:118] - Batch 2 shapes:
+2025-04-21 14:40:48,385 - INFO - [test_data_collator.py:130] - name: <class 'list'>
+2025-04-21 14:40:48,385 - INFO - [test_data_collator.py:121] - keypoints: torch.Size([8, 128, 543, 2])
+2025-04-21 14:40:48,385 - INFO - [test_data_collator.py:121] - valid_len_in: torch.Size([8, 32])
+2025-04-21 14:40:48,385 - INFO - [test_data_collator.py:121] - mask: torch.Size([8, 128])
+2025-04-21 14:40:48,385 - INFO - [test_data_collator.py:121] - mask_head: torch.Size([8, 32])
+2025-04-21 14:40:48,387 - INFO - [test_data_collator.py:121] - gloss_labels: torch.Size([8, 9])
+2025-04-21 14:40:48,387 - INFO - [test_data_collator.py:121] - gloss_lengths: torch.Size([8])
+2025-04-21 14:40:48,387 - INFO - [test_data_collator.py:130] - gloss_input: <class 'list'>
+2025-04-21 14:40:48,388 - INFO - [test_data_collator.py:130] - text_input: <class 'list'>
+2025-04-21 14:40:48,388 - INFO - [test_data_collator.py:175] - Successfully tested collator with batch_size=8

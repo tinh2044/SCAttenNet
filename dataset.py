@@ -89,8 +89,7 @@ class SLR_Dataset(Dataset.Dataset):
 
         gloss_output = self.gloss_tokenizer.batch_encode(gloss_batch, return_length=True)
         
-        new_src_lengths = (((length_keypoints_batch - 1) / 2) + 1).long()
-        new_src_lengths = (((new_src_lengths - 1) / 2) + 1).long()
+        new_src_lengths = (length_keypoints_batch //4).long()
         
         # Create valid_len_in as a 2D tensor with shape (b, t)
         b = keypoints_batch.shape[0]
