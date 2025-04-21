@@ -96,11 +96,10 @@ class RecognitionNetwork(nn.Module):
         fuse_output = torch.cat([left_embed, right_embed, body_embed], dim=-1)
         left_output = torch.cat([left_embed, body_embed], dim=-1)
         right_output = torch.cat([right_embed, body_embed], dim=-1)
-        
-        b, t, d = fuse_output.shape
-        valid_len_in = src_input['valid_len_in'][:, :t]
-        valid_len_in = valid_len_in.long()
-        mask_head = src_input['mask_head'][:, :fuse_output.shape[1]]
+
+        valid_len_in = src_input['valid_len_in']
+        mask_head = src_input['mask_head']
+
         
         # Get visual head outputs
         head_outputs = self.recognition_head(left_output, right_output, fuse_output, mask_head, valid_len_in)
