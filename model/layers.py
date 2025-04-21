@@ -29,6 +29,7 @@ class LearningPositionEmbedding(nn.Embedding):
 class StaticPositionalEncoding(nn.Module):
 
     def __init__(self, size: int = 0, max_len: int = 5000):
+        super(StaticPositionalEncoding, self).__init__()
         if size % 2 != 0:
             raise ValueError(
                 "Cannot use sin/cos positional encoding with "
@@ -42,7 +43,6 @@ class StaticPositionalEncoding(nn.Module):
         pe[:, 0::2] = torch.sin(position.float() * div_term)
         pe[:, 1::2] = torch.cos(position.float() * div_term)
         pe = pe.unsqueeze(0)  # shape: [1, size, max_len]
-        super(PositionalEncoding, self).__init__()
         self.register_buffer("pe", pe)
         self.dim = size
 
