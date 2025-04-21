@@ -91,14 +91,22 @@ class SLR_Dataset(Dataset.Dataset):
         
         new_src_lengths = (((length_keypoints_batch - 1) / 2) + 1).long()
         new_src_lengths = (((new_src_lengths - 1) / 2) + 1).long()
-        mask_head = torch.torch.zeros((keypoints_batch.shape[0], max(new_src_lengths)), dtype=torch.long)
+        
+        # Create valid_len_in as a 2D tensor with shape (b, t)
+        b = keypoints_batch.shape[0]
+        t = max(new_src_lengths)
+        valid_len_in = torch.zeros((b, t), dtype=torch.long)
+        for i in range(b):
+            valid_len_in[i, :new_src_lengths[i]] = new_src_lengths[i]
+        
+        mask_head = torch.zeros((keypoints_batch.shape[0], max(new_src_lengths)), dtype=torch.long)
         for i in range(keypoints_batch.shape[0]):
             mask_head[i, :new_src_lengths[i]] = 1
         
         src_input = {
             "name": name_batch,
             "keypoints": keypoints_batch,
-            "valid_len_in": new_src_lengths,
+            "valid_len_in": valid_len_in,
             "mask": attention_mask,
             "mask_head": mask_head,
                 

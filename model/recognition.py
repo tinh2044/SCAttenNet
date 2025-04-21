@@ -184,7 +184,7 @@ class KeypointModule(nn.Module):
         
         ouput_embed = self.residual_net(y_embed)
         
-        return y_embed
+        return ouput_embed
     
         
 
@@ -215,7 +215,6 @@ class RecognitionNetwork(nn.Module):
     def forward(self, src_input):
         keypoints = src_input['keypoints']
         mask = src_input['mask']
-    
         body_embed = self.body_encoder(keypoints[:, :, self.cfg['body_idx'], :],mask )
         left_embed = self.left_encoder(keypoints[:, :, self.cfg['left_idx'], :],mask )
         right_embed = self.right_encoder(keypoints[:, :, self.cfg['right_idx'], :],mask )
@@ -227,8 +226,9 @@ class RecognitionNetwork(nn.Module):
         right_output = torch.cat([right_embed, body_embed], dim=-1)
         
         
-        
-        valid_len_in = src_input['valid_len_in']
+        b, t, d = fuse_output.shape
+        valid_len_in = src_input['valid_len_in'][:, :t]
+        valid_len_in = valid_len_in.long()
         mask_head = src_input['mask_head'][:, :fuse_output.shape[1]]
         
         left_head = self.left_visual_head(left_output, mask_head, valid_len_in)  
@@ -285,10 +285,17 @@ class RecognitionNetwork(nn.Module):
         # return outputs
 
     def compute_loss(self, gloss_labels, gloss_lengths, gloss_probabilities_log, input_lengths):
+        # Get the actual sequence length from gloss_probabilities_log
+        seq_length = gloss_probabilities_log.shape[1]
+        
+        # Extract non-zero values from each row, but cap at sequence length
+        max_lengths = input_lengths.max(dim=1).values
+        max_lengths = torch.clamp(max_lengths, max=seq_length)
+        
         loss = self.loss_fn(
             log_probs = gloss_probabilities_log.permute(1,0,2),
             targets = gloss_labels,
-            input_lengths = input_lengths,
+            input_lengths = max_lengths,
             target_lengths = gloss_lengths
         )
         loss = loss/gloss_probabilities_log.shape[0]
@@ -297,3 +304,4 @@ class RecognitionNetwork(nn.Module):
 
 if __name__ == "__main__":
     pass
+

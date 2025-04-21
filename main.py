@@ -119,6 +119,12 @@ def main(args, cfg):
     if args.eval:
         if not args.resume:
             logger.warning('Please specify the trained model: --resume /path/to/best_checkpoint.pth')
+        train_stats = evaluate_fn(args, config, train_dataloader, model, gloss_tokenizer, epoch=0, beam_size=5,
+                              generate_cfg={},
+                              do_translation=config['do_translation'], do_recognition=config['do_recognition'],
+                              print_freq=args.print_freq, results_path="./train_results.json")
+        print(f"Train loss of the network on the {len(train_dataloader)} test videos: {train_stats['loss']:.3f}")
+        
         dev_stats = evaluate_fn(args, config, dev_dataloader, model, gloss_tokenizer, epoch=0, beam_size=5,
                               generate_cfg={},
                               do_translation=config['do_translation'], do_recognition=config['do_recognition'],
