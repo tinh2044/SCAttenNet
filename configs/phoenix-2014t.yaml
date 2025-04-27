@@ -216,12 +216,12 @@ model:
     decoder_attention_heads: 16
     decoder_ffn_dim: 768
     decoder_layerdrop: 0.2
-    decoder_layers: 12
+    decoder_layers: 4
     dropout: 0.1
     encoder_attention_heads: 16
     encoder_ffn_dim: 768
     encoder_layerdrop: 0.2
-    encoder_layers: 12
+    encoder_layers: 4
     num_frame: 180
     max_position_embeddings: 256
     num_labels: 1120
@@ -421,7 +421,7 @@ model:
       ff_kernelsize:
         - 3
         - 3
-      ff_size: 2048
+      ff_size: 1024
       hidden_size: 512
       input_size: 256
       pe: true
@@ -430,7 +430,7 @@ model:
       ff_kernelsize:
         - 3
         - 3
-      ff_size: 2048
+      ff_size: 1024
       hidden_size: 512
       input_size: 768
       pe: true
@@ -447,7 +447,7 @@ model:
       ff_kernelsize:
         - 3
         - 3
-      ff_size: 2048
+      ff_size: 1024
       hidden_size: 512
       input_size: 512
       pe: true

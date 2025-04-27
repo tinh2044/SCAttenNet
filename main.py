@@ -9,6 +9,7 @@ import yaml
 import random
 from pathlib import Path
 from loguru import logger
+from pprint import pprint
 
 import torch.distributed as dist
 
@@ -109,21 +110,23 @@ def main(args, cfg):
     if args.resume:
         print(f"Resume training from {args.resume}")
         checkpoint = torch.load(args.resume, map_location='cpu')
-        model.load_state_dict(checkpoint['model'], strict=True)
+        ret = model.load_state_dict(checkpoint['model'], strict=True)
+        
         if not args.eval and 'optimizer' in checkpoint and 'scheduler' in checkpoint and 'epoch' in checkpoint:
+            print('Loading optimizer and scheduler')
             optimizer.load_state_dict(checkpoint['optimizer'])
             scheduler.load_state_dict(checkpoint['scheduler'])
         args.start_epoch = checkpoint['epoch'] + 1
+        
+        print('Missing keys: \n', '\n'.join(ret.missing_keys))
+        print('Unexpected keys: \n', '\n'.join(ret.unexpected_keys))
+        
 
 
     if args.eval:
         if not args.resume:
             logger.warning('Please specify the trained model: --resume /path/to/best_checkpoint.pth')
-        train_stats = evaluate_fn(args, config, train_dataloader, model, gloss_tokenizer, epoch=0, beam_size=5,
-                              generate_cfg={},
-                              do_translation=config['do_translation'], do_recognition=config['do_recognition'],
-                              print_freq=args.print_freq, results_path="./train_results.json")
-        print(f"Train loss of the network on the {len(train_dataloader)} test videos: {train_stats['loss']:.3f}")
+        
         
         dev_stats = evaluate_fn(args, config, dev_dataloader, model, gloss_tokenizer, epoch=0, beam_size=5,
                               generate_cfg={},
@@ -136,6 +139,11 @@ def main(args, cfg):
                               do_translation=config['do_translation'], do_recognition=config['do_recognition'],
                               print_freq=args.print_freq, results_path="./test_results.json")
         print(f"Test loss of the network on the {len(test_dataloader)} test videos: {test_stats['loss']:.3f}")
+        train_stats = evaluate_fn(args, config, train_dataloader, model, gloss_tokenizer, epoch=0, beam_size=5,
+                              generate_cfg={},
+                              do_translation=config['do_translation'], do_recognition=config['do_recognition'],
+                              print_freq=args.print_freq, results_path="./train_results.json")
+        print(f"Train loss of the network on the {len(train_dataloader)} test videos: {train_stats['loss']:.3f}")
         return
 
     print(f"Training on {device}")
