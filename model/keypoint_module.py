@@ -16,11 +16,11 @@ class KeypointModule(nn.Module):
         self.x_coord_module = Encoder(cfg)
         self.y_coord_module = Decoder(cfg)      
         
-        self.residual_net = ResidualNetwork(cfg['d_model'])
+        # self.residual_net = ResidualNetwork(cfg['d_model'])
     
     def forward(self, keypoints, attention_mask=None):
         x = keypoints[:, :, :, 0]
-        y = keypoints[:, :, :, 1]
+        y = keypoints[:, :, :, 1]   
         
         x_embed, y_embed = self.coordinate_mapping(x, y)
         
@@ -31,6 +31,6 @@ class KeypointModule(nn.Module):
                                     y_embed=y_embed, 
                                     attention_mask=attention_mask)
         
-        output_embed = self.residual_net(y_embed)
+        # output_embed = self.residual_net(y_embed)
         
-        return output_embed 
+        return y_embed 

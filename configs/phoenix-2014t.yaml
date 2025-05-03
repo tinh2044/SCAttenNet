@@ -181,7 +181,7 @@ data:
   lowercase: false
   max_len: 128
   max_sent_length: 128
-  normalize: True
+  normalize: true
   root: ./data/Phoenix-2014-T
   shuffle: true
 device: cpu
@@ -425,6 +425,7 @@ model:
       hidden_size: 512
       input_size: 256
       pe: true
+      residual_blocks: [512, 512, 1024, 1024]
 
     fuse_visual_head:
       ff_kernelsize:
@@ -434,6 +435,8 @@ model:
       hidden_size: 512
       input_size: 768
       pe: true
+      residual_blocks: [768, 768, 1024, 1024]
+
     visual_head:
       ff_kernelsize:
         - 3
@@ -442,6 +445,8 @@ model:
       hidden_size: 512
       input_size: 256
       pe: true
+      residual_blocks: [256, 512, 1024, 1024]
+
 
     left_visual_head:
       ff_kernelsize:
@@ -451,6 +456,8 @@ model:
       hidden_size: 512
       input_size: 512
       pe: true
+      residual_blocks: [512, 512, 1024, 1024]
+
 
     right_visual_head:
       ff_kernelsize:
@@ -460,5 +467,6 @@ model:
       hidden_size: 512
       input_size: 512
       pe: true
+      residual_blocks: [512, 512, 1024, 1024]
 
     cross_distillation: False
