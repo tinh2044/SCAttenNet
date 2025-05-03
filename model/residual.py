@@ -121,8 +121,8 @@ class PermuteLayer(nn.Module):
 
 if __name__ == "__main__":
     batch_size = 32
-    T = 180
-    initial_dim = 512  # Kích thước đầu vào ban đầu
+    T = 181
+    initial_dim = 512  
     
     # Danh sách kích thước đầu ra của từng block
     residual_blocks = [512, 512, 1024, 1024]

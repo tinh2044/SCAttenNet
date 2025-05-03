@@ -10,7 +10,7 @@ class VisualHead(torch.nn.Module):
         cls_num, input_size=512, hidden_size=1024, ff_size=2048, pe=True,
         ff_kernelsize=[3,3], residual_blocks=[]):
         super().__init__()
-        self.hidden_size = hidden_size
+        self.hidden_size = residual_blocks[-1]
 
         # if input_size is None:
         #     self.fc1 = nn.Identity()
@@ -27,11 +27,11 @@ class VisualHead(torch.nn.Module):
         else:
             self.pe = torch.nn.Identity()
 
-        self.feedforward = PositionWiseFeedForward(input_size=self.hidden_size,
-            ff_size=ff_size,
-            dropout=0.1, kernel_size=ff_kernelsize, skip_connection=True)
+        # self.feedforward = PositionWiseFeedForward(input_size=self.hidden_size,
+        #     ff_size=ff_size,
+        #     dropout=0.1, kernel_size=ff_kernelsize, skip_connection=True)
         
-        self.layer_norm = torch.nn.LayerNorm(self.hidden_size, eps=1e-6)
+        # self.layer_norm = torch.nn.LayerNorm(self.hidden_size, eps=1e-6)
 
         self.gloss_output_layer = torch.nn.Linear(self.hidden_size, cls_num)
 
@@ -51,8 +51,8 @@ class VisualHead(torch.nn.Module):
         x = self.dropout1(x)
 
         #feedforward
-        x = self.feedforward(x)
-        x = self.layer_norm(x)
+        # x = self.feedforward(x)
+        # x = self.layer_norm(x)
 
                 
         #classification

@@ -422,7 +422,7 @@ model:
         - 3
         - 3
       ff_size: 1024
-      hidden_size: 512
+      hidden_size: 1024
       input_size: 256
       pe: true
       residual_blocks: [512, 512, 1024, 1024]
@@ -432,7 +432,7 @@ model:
         - 3
         - 3
       ff_size: 1024
-      hidden_size: 512
+      hidden_size: 1024
       input_size: 768
       pe: true
       residual_blocks: [768, 768, 1024, 1024]
@@ -442,7 +442,7 @@ model:
         - 3
         - 3
       ff_size: 1024
-      hidden_size: 512
+      hidden_size: 1024
       input_size: 256
       pe: true
       residual_blocks: [256, 512, 1024, 1024]
@@ -453,7 +453,7 @@ model:
         - 3
         - 3
       ff_size: 1024
-      hidden_size: 512
+      hidden_size: 1024
       input_size: 512
       pe: true
       residual_blocks: [512, 512, 1024, 1024]
@@ -464,7 +464,7 @@ model:
         - 3
         - 3
       ff_size: 2048
-      hidden_size: 512
+      hidden_size: 1024
       input_size: 512
       pe: true
       residual_blocks: [512, 512, 1024, 1024]
