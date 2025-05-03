@@ -2,19 +2,22 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from model.layers import StaticPositionalEncoding, MaskedNorm, PositionWiseFeedForward, MLPHead
+from model.residual import ResidualNetwork
 
 
 class VisualHead(torch.nn.Module):
     def __init__(self, 
         cls_num, input_size=512, hidden_size=1024, ff_size=2048, pe=True,
-        ff_kernelsize=[3,3]):
+        ff_kernelsize=[3,3], residual_blocks=[]):
         super().__init__()
         self.hidden_size = hidden_size
 
-        if input_size is None:
-            self.fc1 = nn.Identity()
-        else:
-            self.fc1 = torch.nn.Linear(input_size, self.hidden_size)
+        # if input_size is None:
+        #     self.fc1 = nn.Identity()
+        # else:
+        #    self.fc1 = nn.Linear(input_size, self.hidden_size)
+        
+        self.residual = ResidualNetwork(residual_blocks=residual_blocks)
         self.bn1 = MaskedNorm(num_features=self.hidden_size, norm_type='batch')
         self.relu1 = torch.nn.ReLU()
         self.dropout1 = torch.nn.Dropout(p=0.1)
@@ -39,7 +42,8 @@ class VisualHead(torch.nn.Module):
         
 
         #projection 1
-        x = self.fc1(x)
+        # x = self.fc1(x)
+        x, _ = self.residual(x)
         x = self.bn1(x, mask)
         x = self.relu1(x)
         #pe
