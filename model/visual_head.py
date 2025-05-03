@@ -18,7 +18,7 @@ class VisualHead(torch.nn.Module):
         #    self.fc1 = nn.Linear(input_size, self.hidden_size)
         
         self.residual = ResidualNetwork(residual_blocks=residual_blocks)
-        self.bn1 = MaskedNorm(num_features=self.hidden_size, norm_type='batch')
+        self.bn1 = nn.LayerNorm(residual_blocks[-1], eps=1e-6)
         self.relu1 = torch.nn.ReLU()
         self.dropout1 = torch.nn.Dropout(p=0.1)
 
@@ -44,7 +44,7 @@ class VisualHead(torch.nn.Module):
         #projection 1
         # x = self.fc1(x)
         x, _ = self.residual(x)
-        x = self.bn1(x, mask)
+        x = self.bn1(x)
         x = self.relu1(x)
         #pe
         x = self.pe(x)
