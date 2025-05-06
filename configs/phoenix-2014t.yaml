@@ -445,7 +445,7 @@ model:
       hidden_size: 1024
       input_size: 256
       pe: false
-      residual_blocks: [256, 512, 1024, 1024]
+      residual_blocks: [256, 256, 512, 1024]
 
 
     left_visual_head:
