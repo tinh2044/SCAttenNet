@@ -55,7 +55,7 @@ class ResidualNetwork(nn.Module):
         for i in range(len(residual_blocks)):
             in_dim = residual_blocks[i-1] if i > 0 else residual_blocks[0]
             out_dim = residual_blocks[i]
-            downsample = True
+            downsample = (i % 2 == 0)
             self.blocks.append(ResidualBlock(in_dim, out_dim, downsample=downsample))
             
             if i > 0:
@@ -122,10 +122,10 @@ class PermuteLayer(nn.Module):
 if __name__ == "__main__":
     batch_size = 32
     T = 181
-    initial_dim = 512  
+    initial_dim = 256  
     
     # Danh sách kích thước đầu ra của từng block
-    residual_blocks = [512, 1024]
+    residual_blocks = [256, 256, 512, 1024]
     
     model = ResidualNetwork(residual_blocks)
     input_tensor = torch.randn(batch_size, T, initial_dim)
