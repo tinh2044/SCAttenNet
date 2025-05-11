@@ -425,7 +425,7 @@ model:
       hidden_size: 1024
       input_size: 256
       pe: false
-      residual_blocks: [512, 1024]
+      residual_blocks: [512, 1024, 1024]
 
     fuse_visual_head:
       ff_kernelsize:
@@ -435,7 +435,7 @@ model:
       hidden_size: 1024
       input_size: 768
       pe: false
-      residual_blocks: [768, 1024]
+      residual_blocks: [768, 1024, 1024]
 
     visual_head:
       ff_kernelsize:
@@ -456,17 +456,17 @@ model:
       hidden_size: 1024
       input_size: 512
       pe: false
-      residual_blocks: [512, 1024]
+      residual_blocks: [512, 1024, 1024]
 
 
     right_visual_head:
       ff_kernelsize:
         - 3
         - 3
-      ff_size: 2048
+      ff_size: 1024
       hidden_size: 1024
       input_size: 512
       pe: false
-      residual_blocks: [512, 1024]
+      residual_blocks: [512, 1024, 1024]
 
     cross_distillation: False
