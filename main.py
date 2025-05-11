@@ -110,7 +110,12 @@ def main(args, cfg):
     if args.resume:
         print(f"Resume training from {args.resume}")
         checkpoint = torch.load(args.resume, map_location='cpu')
-        ret = model.load_state_dict(checkpoint['model'], strict=True)
+        if utils.check_state_dict(model, checkpoint['model']):
+            ret = model.load_state_dict(checkpoint['model'], strict=True)
+        else:
+            print("Model and state dict are different")
+            # ret = model.load_state_dict(checkpoint['model'], strict=False)
+            raise ValueError("Model and state dict are different")
         
         if not args.eval and 'optimizer' in checkpoint and 'scheduler' in checkpoint and 'epoch' in checkpoint:
             print('Loading optimizer and scheduler')

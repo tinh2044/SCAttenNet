@@ -122,10 +122,10 @@ class PermuteLayer(nn.Module):
 if __name__ == "__main__":
     batch_size = 32
     T = 181
-    initial_dim = 256  
+    initial_dim = 512  
     
     # Danh sách kích thước đầu ra của từng block
-    residual_blocks = [256, 256, 512, 1024]
+    residual_blocks = [512, 512, 1024]
     
     model = ResidualNetwork(residual_blocks)
     input_tensor = torch.randn(batch_size, T, initial_dim)
