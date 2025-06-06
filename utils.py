@@ -246,3 +246,23 @@ def expand_frame_mask(mask, num_heads, num_keypoints, num_queries):
     mask = mask.expand(-1, num_heads, -1, num_keypoints, num_queries)  
 
     return mask
+
+def check_state_dict(model, state_dict):
+    is_same = True
+    model_state_dict = model.state_dict()
+    for key in state_dict.keys():
+        if key not in model_state_dict:
+            print(f"Key {key} not found in model state dict")
+        else:
+            if state_dict[key].shape != model_state_dict[key].shape:
+                print(f"Has different shape in model state dict")
+                print(f"Key: {key}")
+                print(f"State dict shape: {state_dict[key].shape}")
+                print(f"Model state dict shape: {model_state_dict[key].shape}")
+                print()
+                is_same = False
+    if is_same:
+        print("Model and state dict are the same")
+    else:
+        print("Model and state dict are different")
+    return is_same

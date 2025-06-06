@@ -12,3 +12,5 @@ tests/
 tools/
 .qodo
 logs/
+results/
+visualizations/
