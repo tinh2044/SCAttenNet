@@ -13,4 +13,9 @@ tools/
 .qodo
 logs/
 results/
-visualizations/
+*visualizations/
+*logs/
+*.log
+comparison_dev_test/
+*.*/
+config.yaml
