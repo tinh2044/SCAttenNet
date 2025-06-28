@@ -36,7 +36,7 @@ import sys
 import unicodedata
 import urllib.request
 
-from collections import Counter, namedtuple
+from collections import Counter
 from itertools import zip_longest
 from typing import List, Iterable, Tuple, Union
 import numpy as np
@@ -1336,68 +1336,68 @@ def tokenize_zh(sentence):
         :return: whether the input char is a Chinese character.
         """
         if (
-            uchar >= u"\u3400" and uchar <= u"\u4db5"
+            uchar >= "\u3400" and uchar <= "\u4db5"
         ):  # CJK Unified Ideographs Extension A, release 3.0
             return True
         elif (
-            uchar >= u"\u4e00" and uchar <= u"\u9fa5"
+            uchar >= "\u4e00" and uchar <= "\u9fa5"
         ):  # CJK Unified Ideographs, release 1.1
             return True
         elif (
-            uchar >= u"\u9fa6" and uchar <= u"\u9fbb"
+            uchar >= "\u9fa6" and uchar <= "\u9fbb"
         ):  # CJK Unified Ideographs, release 4.1
             return True
         elif (
-            uchar >= u"\uf900" and uchar <= u"\ufa2d"
+            uchar >= "\uf900" and uchar <= "\ufa2d"
         ):  # CJK Compatibility Ideographs, release 1.1
             return True
         elif (
-            uchar >= u"\ufa30" and uchar <= u"\ufa6a"
+            uchar >= "\ufa30" and uchar <= "\ufa6a"
         ):  # CJK Compatibility Ideographs, release 3.2
             return True
         elif (
-            uchar >= u"\ufa70" and uchar <= u"\ufad9"
+            uchar >= "\ufa70" and uchar <= "\ufad9"
         ):  # CJK Compatibility Ideographs, release 4.1
             return True
         elif (
-            uchar >= u"\u20000" and uchar <= u"\u2a6d6"
+            uchar >= "\u20000" and uchar <= "\u2a6d6"
         ):  # CJK Unified Ideographs Extension B, release 3.1
             return True
         elif (
-            uchar >= u"\u2f800" and uchar <= u"\u2fa1d"
+            uchar >= "\u2f800" and uchar <= "\u2fa1d"
         ):  # CJK Compatibility Supplement, release 3.1
             return True
         elif (
-            uchar >= u"\uff00" and uchar <= u"\uffef"
+            uchar >= "\uff00" and uchar <= "\uffef"
         ):  # Full width ASCII, full width of English punctuation, half width Katakana, half wide half width kana, Korean alphabet
             return True
-        elif uchar >= u"\u2e80" and uchar <= u"\u2eff":  # CJK Radicals Supplement
+        elif uchar >= "\u2e80" and uchar <= "\u2eff":  # CJK Radicals Supplement
             return True
-        elif uchar >= u"\u3000" and uchar <= u"\u303f":  # CJK punctuation mark
+        elif uchar >= "\u3000" and uchar <= "\u303f":  # CJK punctuation mark
             return True
-        elif uchar >= u"\u31c0" and uchar <= u"\u31ef":  # CJK stroke
+        elif uchar >= "\u31c0" and uchar <= "\u31ef":  # CJK stroke
             return True
-        elif uchar >= u"\u2f00" and uchar <= u"\u2fdf":  # Kangxi Radicals
+        elif uchar >= "\u2f00" and uchar <= "\u2fdf":  # Kangxi Radicals
             return True
-        elif uchar >= u"\u2ff0" and uchar <= u"\u2fff":  # Chinese character structure
+        elif uchar >= "\u2ff0" and uchar <= "\u2fff":  # Chinese character structure
             return True
-        elif uchar >= u"\u3100" and uchar <= u"\u312f":  # Phonetic symbols
+        elif uchar >= "\u3100" and uchar <= "\u312f":  # Phonetic symbols
             return True
         elif (
-            uchar >= u"\u31a0" and uchar <= u"\u31bf"
+            uchar >= "\u31a0" and uchar <= "\u31bf"
         ):  # Phonetic symbols (Taiwanese and Hakka expansion)
             return True
-        elif uchar >= u"\ufe10" and uchar <= u"\ufe1f":
+        elif uchar >= "\ufe10" and uchar <= "\ufe1f":
             return True
-        elif uchar >= u"\ufe30" and uchar <= u"\ufe4f":
+        elif uchar >= "\ufe30" and uchar <= "\ufe4f":
             return True
-        elif uchar >= u"\u2600" and uchar <= u"\u26ff":
+        elif uchar >= "\u2600" and uchar <= "\u26ff":
             return True
-        elif uchar >= u"\u2700" and uchar <= u"\u27bf":
+        elif uchar >= "\u2700" and uchar <= "\u27bf":
             return True
-        elif uchar >= u"\u3200" and uchar <= u"\u32ff":
+        elif uchar >= "\u3200" and uchar <= "\u32ff":
             return True
-        elif uchar >= u"\u3300" and uchar <= u"\u33ff":
+        elif uchar >= "\u3300" and uchar <= "\u33ff":
             return True
 
         return False
@@ -1704,9 +1704,10 @@ def download_test_set(test_set, langpair=None):
             if not os.path.exists(tarball) or os.path.getsize(tarball) == 0:
                 logging.info("Downloading %s to %s", dataset, tarball)
                 try:
-                    with urllib.request.urlopen(dataset) as f, open(
-                        tarball, "wb"
-                    ) as out:
+                    with (
+                        urllib.request.urlopen(dataset) as f,
+                        open(tarball, "wb") as out,
+                    ):
                         out.write(f.read())
                 except ssl.SSLError:
                     logging.warning(
@@ -1799,7 +1800,6 @@ class Result:
 
 class BLEU:
     def __init__(self, scores, counts, totals, precisions, bp, sys_len, ref_len):
-
         self.scores = scores
         self.counts = counts
         self.totals = totals
@@ -2096,7 +2096,7 @@ def _avg_precision_and_recall(
 def _chrf(avg_precision, avg_recall, beta: int = CHRF_BETA) -> float:
     if avg_precision + avg_recall == 0:
         return 0.0
-    beta_square = beta ** 2
+    beta_square = beta**2
     score = (
         (1 + beta_square)
         * (avg_precision * avg_recall)
@@ -2154,7 +2154,7 @@ def sentence_chrf(
 
 
 def get_a_list_of_testset_names():
-    """Return a string with a formatted list of available test sets plus their descriptions. """
+    """Return a string with a formatted list of available test sets plus their descriptions."""
     message = "The available test sets are:"
     for testset in sorted(DATASETS.keys(), reverse=True):
         message += "\n%20s: %s" % (testset, DATASETS[testset].get("description", ""))
@@ -2761,10 +2761,10 @@ def wer_list(references, hypotheses):
         total_ins += res["num_ins"]
         total_sub += res["num_sub"]
         total_ref_len += res["num_ref"]
-        
+
     if total_ref_len == 0:
         total_ref_len = 1
-    
+
     if total_error == 0:
         total_error = 1
 
@@ -2773,7 +2773,7 @@ def wer_list(references, hypotheses):
 
     if total_ins == 0:
         total_ins = 1
-    
+
     if total_sub == 0:
         total_sub = 1
 
@@ -2905,34 +2905,6 @@ def get_alignment(r, h, d):
         alignlist[::-1],
         {"align_ref": align_ref, "align_hyp": align_hyp, "alignment": alignment},
     )
-import sacrebleu, Rouge
-def bleu(references, hypotheses, level='word'):
-    """
-    Raw corpus BLEU from sacrebleu (without tokenization)
-    :param hypotheses: list of hypotheses (strings)
-    :param references: list of references (strings)
-    :return:
-    """
-    if level=='char':
-        #split word
-        references = [' '.join(list(r)) for r in references]
-        hypotheses = [' '.join(list(r)) for r in hypotheses]
-    bleu_scores = sacrebleu.raw_corpus_bleu(
-        sys_stream=hypotheses, ref_streams=[references]
-    ).scores
-    scores = {}
-    for n in range(len(bleu_scores)):
-        scores["bleu" + str(n + 1)] = bleu_scores[n]
-    return scores
-def rouge(references, hypotheses, level='word'):
-    if level=='char':
-        hyp = [list(x) for x in hypotheses]
-        ref = [list(x) for x in references]
-    else:
-        hyp = [x.split() for x in hypotheses]
-        ref = [x.split() for x in references]
-    a = Rouge.rouge([' '.join(x) for x in hyp], [' '.join(x) for x in ref])
-    return a['rouge_l/f_score']*100
 
 
 if __name__ == "__main__":

@@ -12,7 +12,7 @@ We propose SCAttenNet, a novel spatial-coordinate attention network for continuo
 | Dataset | WER | Model | Training |
 | :---: | :---: | :---: | :---: | 
 | Phoenix-2014 | 18.1% | [ckpt](placeholder) | [config](configs/phoenix-2014_s2g.yaml) |
-| Phoenix-2014T | 19.5% | [ckpt](placeholder) | [config](configs/phoenix-2014t_s2g.yaml) |
+| Phoenix-2014T | 17.67% | [ckpt](placeholder) | [config](configs/phoenix-2014t_s2g.yaml) |
  
 
 ## Installation

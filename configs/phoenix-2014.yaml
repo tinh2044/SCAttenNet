@@ -1,5 +1,5 @@
 data:
-  dataset_name: Phoenix-2014-T
+  dataset_name: Phoenix-2014
   input_streams: keypoint
   joint_parts:
     - - 11
@@ -182,18 +182,18 @@ data:
   max_len: 128
   max_sent_length: 128
   normalize: true
-  root: ./data/Phoenix-2014-T
+  root: ./data/Phoenix-2014
   shuffle: true
 device: cpu
 gloss_tokenizer:
-  gloss2id_file: ./data/Phoenix-2014-T/gloss2ids.json
+  gloss2id_file: ./data/Phoenix-2014/gloss2ids.json
   split: " "
 testing:
   recognition:
     beam_size: 5
   translation: null
 training:
-  model_dir: ./outputs/Phoenix-2014-T
+  model_dir: ./outputs/Phoenix-2014
   optimization:
     betas:
       - 0.9
@@ -208,7 +208,7 @@ training:
 model:
   activation_dropout: 0.1
   attention_dropout: 0.0
-  d_model: 256
+  d_model: 512
   decoder_attention_heads: 16
   decoder_ffn_dim: 768
   decoder_layerdrop: 0.2

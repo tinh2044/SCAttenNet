@@ -19,3 +19,16 @@ results/
 comparison_dev_test/
 *.*/
 config.yaml
+docs/
+logs/
+*.pth
+*.pt
+*.pkl
+*.ptl
+*.ptl.tar
+*.ptl.tar.gz
+*.ptl.tar.bz2
+*.ptl.tar.xz
+*.ptl.tar.lzma
+*.bkp
+*.drawio
