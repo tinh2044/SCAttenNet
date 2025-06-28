@@ -2,10 +2,16 @@
 
 <a href="https://pytorch.org/get-started/locally/"><img alt="PyTorch" src="https://img.shields.io/badge/PyTorch-ee4c2c?logo=pytorch&logoColor=white"></a> [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/release/python-380/)
 
-## Introduction
-We propose SCAttenNet, a novel spatial-coordinate attention network for continuous sign language recognition that leverages coordinate-aware processing to capture the intricate spatial-temporal dependencies inherent in sign language gestures. Our approach employs a dual-coordinate encoder-decoder framework with cross-attention mechanisms to process human pose keypoints effectively. The resulting framework separates X and Y coordinate processing to enhance spatial relationship modeling and achieves superior performance through innovative coordinate-aware processing and multi-scale feature extraction.
+## Abstract
+Sign language recognition faces persistent challenges in modeling inter-keypoint correlations and capturing fine-grained articulatory patterns. Existing approaches typically process horizontal and vertical coordinates jointly, obscuring linguistically significant axis-specific motion dynamics. This paper introduces SCAttenNet, a novel multi-stream attention network featuring separate coordinates processing that decomposes skeletal sequences into four region-specific streams. The architecture processes horizontal movements through self-attention mechanisms while modeling vertical dynamics via self-causal attention, with cross-attention fusion explicitly maintaining coordinates interdependencies. A frame-level self-distillation framework further enhances robustness by transferring ensemble knowledge across anatomical streams. Evaluations establish new state-of-the-art performance on standard benchmarks, achieving 18.42\% word error rate on Phoenix-2014 and 17.95\% on Phoenix-2014T - surpassing both keypoint-based and RGB-based methods while eliminating handcrafted graph topologies. The approach presents an efficient solution for continuous sign language recognition with significant potential for enhancing communication accessibility.
 
-<img src="images/architecture.png" width="800">
+<p align="center">
+  <img src="images/arch.png" alt="SCAttenNet Architecture" width="800"/>
+</p>
+
+<p align="center">
+  <img src="images/keypoints_module.png" alt="Coordinate Mapping & Keypoint Module" width="600"/>
+</p>
 
 ## Performance
 
