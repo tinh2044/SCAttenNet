@@ -45,28 +45,32 @@ class SLR_Dataset(Dataset.Dataset):
 
         keypoints = sample["keypoints"][:, :, :-2]
         gloss = sample["gloss"]
-        text = sample["text"]
-        name = sample["name"]
+        # text = sample["text"]
+        if "name" in sample:
+            name = sample["name"]
+        elif "id" in sample:
+            name = sample["id"]
+        else:
+            name = ""
 
-        return keypoints, gloss, text, name
+        return keypoints, gloss, name
 
     def data_collator(self, batch):
-        keypoints_batch, length_keypoints_batch, gloss_batch, text_batch, name_batch = (
-            [],
+        keypoints_batch, length_keypoints_batch, gloss_batch, name_batch = (
             [],
             [],
             [],
             [],
         )
 
-        for keypoints, gloss, text, name in batch:
+        for keypoints, gloss, name in batch:
             keypoints = self.preprocess_keypoints(keypoints)
             keypoints = torch.from_numpy(keypoints).float()
 
             length_keypoints_batch.append(keypoints.shape[0])
             keypoints_batch.append(keypoints)
             gloss_batch.append(gloss)
-            text_batch.append(text)
+            # text_batch.append(text)
             name_batch.append(name)
 
         padding_keypoints_batch = []
@@ -112,7 +116,7 @@ class SLR_Dataset(Dataset.Dataset):
             "gloss_labels": gloss_output["input_ids"],
             "gloss_lengths": gloss_output["length"],
             "gloss_input": gloss_batch,
-            "text_input": text_batch,
+            # "text_input": text_batch,
         }
 
         return src_input
