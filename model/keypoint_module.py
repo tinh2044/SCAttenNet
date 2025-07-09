@@ -33,6 +33,5 @@ class SeparativeCoordinateAttention(nn.Module):
         )
         y_embed = y_embed.permute(0, 2, 1)
         outputs, _ = self.residual(y_embed)
-        print(outputs.shape)
 
         return outputs

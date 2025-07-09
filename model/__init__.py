@@ -109,13 +109,17 @@ class MSCA_Net(torch.nn.Module):
         outputs["total_loss"] = 0
 
         for k in ["left", "right", "body", "fuse"]:
-            outputs[f"{k}_loss"] = self.compute_loss(
+            l = self.compute_loss(
                 labels=src_input["gloss_labels"],
                 lengths=src_input["gloss_lengths"],
                 logits=outputs[f"{k}_gloss_logits"],
                 input_lengths=src_input["valid_len_in"],
             )
 
+            if torch.isnan(l) or torch.isinf(l):
+                raise ValueError(f"NaN or inf in {k}_loss")
+
+            outputs[f"{k}_loss"] = l
             outputs["total_loss"] += outputs[f"{k}_loss"]
 
         if self.self_distillation:
@@ -133,6 +137,11 @@ class MSCA_Net(torch.nn.Module):
                 outputs[f"{student}_distill_loss"] = weight * self.distillation_loss(
                     student_logits, teacher_logits, use_blank=False
                 )
+                if torch.isnan(outputs[f"{student}_distill_loss"]) or torch.isinf(
+                    outputs[f"{student}_distill_loss"]
+                ):
+                    raise ValueError(f"NaN or inf in {student}_distill_loss")
+
                 outputs["total_loss"] += outputs[f"{student}_distill_loss"]
 
         return outputs
