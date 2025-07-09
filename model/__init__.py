@@ -107,6 +107,11 @@ class MSCA_Net(torch.nn.Module):
 
         outputs = {**head_outputs, "input_lengths": src_input["valid_len_in"]}
         outputs["total_loss"] = 0
+        for k in ["left", "right", "body", "fuse"]:
+            if torch.isnan(outputs[f"{k}_gloss_logits"]).any():
+                raise ValueError(f"NaN in {k}_gloss_logits")
+            if torch.isinf(outputs[f"{k}_gloss_logits"]).any():
+                raise ValueError(f"inf in {k}_gloss_logits")
 
         for k in ["left", "right", "body", "fuse"]:
             l = self.compute_loss(
