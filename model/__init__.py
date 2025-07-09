@@ -75,7 +75,7 @@ class MSCA_Net(torch.nn.Module):
         )
         self.recognition_head = RecognitionHead(cfg, gloss_tokenizer)
 
-        self.loss_fn = nn.CTCLoss(reduction="mean", zero_infinity=False)
+        self.loss_fn = nn.CTCLoss(reduction="mean", zero_infinity=False, blank=0)
         self.distillation_loss = SeqKD()
 
     def forward(self, src_input, **kwargs):
@@ -123,7 +123,7 @@ class MSCA_Net(torch.nn.Module):
             )
 
             if torch.isnan(l) or torch.isinf(l):
-                print(f"NaN or inf in {k}_loss")
+                raise (f"NaN or inf in {k}_loss")
             else:
                 outputs[f"{k}_loss"] = l
                 outputs["total_loss"] += outputs[f"{k}_loss"]
@@ -154,6 +154,7 @@ class MSCA_Net(torch.nn.Module):
 
     def compute_loss(self, labels, lengths, logits, input_lengths):
         batch_size = logits.shape[1]
+        time_steps = logits.shape[0]
 
         if input_lengths.shape[0] != batch_size:
             raise ValueError(
@@ -164,15 +165,28 @@ class MSCA_Net(torch.nn.Module):
                 f"target_lengths size {lengths.shape[0]} doesn't match batch_size {batch_size}"
             )
 
+        input_lengths = input_lengths.to(dtype=torch.long)
+
+        input_lengths = torch.clamp(input_lengths, max=time_steps)
+
+        input_lengths = input_lengths.to(logits.device)
+        lengths = lengths.to(logits.device)
+        labels = labels.to(logits.device)
+
         try:
+            logits = logits.permute(1, 0, 2)
+            logits = logits.log_softmax(dim=-1)
+            logits = logits.permute(1, 0, 2)
+
             loss = self.loss_fn(
-                log_probs=logits.permute(1, 0, 2).log_softmax(dim=-1).permute(1, 2, 0),
+                log_probs=logits,
                 targets=labels,
                 input_lengths=input_lengths,
                 target_lengths=lengths,
             )
 
         except Exception as e:
+            print(f"Error in CTC loss: {str(e)}")
             raise e
 
         return loss

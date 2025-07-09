@@ -31,7 +31,11 @@ def train_one_epoch(args, model, data_loader, optimizer, epoch, print_freq=1):
         if not math.isfinite(loss):
             print("Loss is {}, stopping training".format(loss_value))
             sys.exit(1)
-        metric_logger.update(loss=loss_value)
+        for k, v in output.items():
+            if "loss" in k and "gloss" not in k:
+                # print(k, v)
+                metric_logger.update(**{k: v})
+        # metric_logger.update(loss=loss_value)
         metric_logger.update(lr=optimizer.param_groups[0]["lr"])
 
     print("Averaged results:", metric_logger)

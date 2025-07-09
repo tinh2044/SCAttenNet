@@ -10,6 +10,7 @@ from loguru import logger
 
 from utils import is_dist_avail_and_initialized
 
+
 class SmoothedValue(object):
     """Track a series of values and provide access to smoothed values over a
     window or the global series average.
@@ -34,7 +35,7 @@ class SmoothedValue(object):
         """
         if not is_dist_avail_and_initialized():
             return
-        t = torch.tensor([self.count, self.total], dtype=torch.float64, device='cuda')
+        t = torch.tensor([self.count, self.total], dtype=torch.float64, device="cuda")
         dist.barrier()
         dist.all_reduce(t)
         t = t.tolist()
@@ -69,14 +70,15 @@ class SmoothedValue(object):
             avg=self.avg,
             global_avg=self.global_avg,
             max=self.max,
-            value=self.value)
-
+            value=self.value,
+        )
 
 
 class MetricLogger(object):
-    def __init__(self, delimiter="\t"):
+    def __init__(self, delimiter="\t", log_dir="logs", prefix="train"):
         self.meters = defaultdict(SmoothedValue)
         self.delimiter = delimiter
+        self.logger = Logger(log_dir=log_dir, prefix=prefix)
 
     def update(self, **kwargs):
         for k, v in kwargs.items():
@@ -90,15 +92,14 @@ class MetricLogger(object):
             return self.meters[attr]
         if attr in self.__dict__:
             return self.__dict__[attr]
-        raise AttributeError("'{}' object has no attribute '{}'".format(
-            type(self).__name__, attr))
+        raise AttributeError(
+            "'{}' object has no attribute '{}'".format(type(self).__name__, attr)
+        )
 
     def __str__(self):
         loss_str = []
         for name, meter in self.meters.items():
-            loss_str.append(
-                "{}: {}".format(name, str(meter))
-            )
+            loss_str.append("{}: {}".format(name, str(meter)))
         return self.delimiter.join(loss_str)
 
     def synchronize_between_processes(self):
@@ -111,22 +112,22 @@ class MetricLogger(object):
     def log_every(self, iterable, print_freq, header=None):
         i = 0
         if not header:
-            header = ''
+            header = ""
         start_time = time.time()
         end = time.time()
-        iter_time = SmoothedValue(fmt='{avg:.4f}')
-        data_time = SmoothedValue(fmt='{avg:.4f}')
-        space_fmt = ':' + str(len(str(len(iterable)))) + 'd'
+        iter_time = SmoothedValue(fmt="{avg:.4f}")
+        data_time = SmoothedValue(fmt="{avg:.4f}")
+        space_fmt = ":" + str(len(str(len(iterable)))) + "d"
         log_msg = [
             header,
-            '[{0' + space_fmt + '}/{1}]',
-            'eta: {eta}',
-            '{meters}',
-            'time: {time}',
-            'data: {data}'
+            "[{0" + space_fmt + "}/{1}]",
+            "eta: {eta}",
+            "{meters}",
+            "time: {time}",
+            "data: {data}",
         ]
         if torch.cuda.is_available():
-            log_msg.append('max mem: {memory:.0f}')
+            log_msg.append("max mem: {memory:.0f}")
         log_msg = self.delimiter.join(log_msg)
         MB = 1024.0 * 1024.0
         for obj in iterable:
@@ -137,42 +138,48 @@ class MetricLogger(object):
                 eta_seconds = iter_time.global_avg * (len(iterable) - i)
                 eta_string = str(datetime.timedelta(seconds=int(eta_seconds)))
                 if torch.cuda.is_available() and torch.cuda.device_count() > 1:
-                    if os.environ['LOCAL_RANK'] == '0':
-                        if torch.cuda.is_available():
-                            print(log_msg.format(
-                                i, len(iterable), eta=eta_string,
-                                meters=str(self),
-                                time=str(iter_time), data=str(data_time),
-                                memory=torch.cuda.max_memory_allocated() / MB))
-                        else:
-                            print(log_msg.format(
-                                i, len(iterable), eta=eta_string,
-                                meters=str(self),
-                                time=str(iter_time), data=str(data_time)))
+                    if os.environ.get("LOCAL_RANK", "0") == "0":
+                        log_str = self._format_log(
+                            i, len(iterable), eta_string, iter_time, data_time, MB
+                        )
+                        self.logger.info(log_str)
                 else:
-                    if torch.cuda.is_available():
-                        print(log_msg.format(
-                            i, len(iterable), eta=eta_string,
-                            meters=str(self),
-                            time=str(iter_time), data=str(data_time),
-                            memory=torch.cuda.max_memory_allocated() / MB))
-                    else:
-                        print(log_msg.format(
-                            i, len(iterable), eta=eta_string,
-                            meters=str(self),
-                            time=str(iter_time), data=str(data_time)))
+                    log_str = self._format_log(
+                        i, len(iterable), eta_string, iter_time, data_time, MB
+                    )
+                    self.logger.info(log_str)
             i += 1
             end = time.time()
         total_time = time.time() - start_time
         total_time_str = str(datetime.timedelta(seconds=int(total_time)))
         if torch.cuda.is_available() and torch.cuda.device_count() > 1:
-            if os.environ['LOCAL_RANK'] == '0':
-                print('{} Total time: {} ({:.4f} s / it)'.format(
-                    header, total_time_str, total_time / len(iterable)))
+            if os.environ.get("LOCAL_RANK", "0") == "0":
+                final_str = "{} Total time: {} ({:.4f} s / it)".format(
+                    header, total_time_str, total_time / len(iterable)
+                )
+                self.logger.info(final_str)
         else:
-            print('{} Total time: {} ({:.4f} s / it)'.format(
-                header, total_time_str, total_time / len(iterable)))
-            
+            final_str = "{} Total time: {} ({:.4f} s / it)".format(
+                header, total_time_str, total_time / len(iterable)
+            )
+            self.logger.info(final_str)
+
+    def _format_log(self, i, total_len, eta_string, iter_time, data_time, MB):
+        if torch.cuda.is_available():
+            return "Step [{}/{}]\tETA: {}\t{}\tTime: {}\tData: {}\tMax Memory: {:.0f}MB".format(
+                i,
+                total_len,
+                eta_string,
+                str(self),
+                str(iter_time),
+                str(data_time),
+                torch.cuda.max_memory_allocated() / MB,
+            )
+        else:
+            return "Step [{}/{}]\tETA: {}\t{}\tTime: {}\tData: {}".format(
+                i, total_len, eta_string, str(self), str(iter_time), str(data_time)
+            )
+
 
 class Logger:
     def __init__(self, log_dir="logs", prefix="logfile"):
@@ -181,11 +188,18 @@ class Logger:
         timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
         self.log_file = f"{log_dir}/{prefix}_{timestamp}.log"
 
-        logger.add(sys.stdout, format="{time} {level} {message}", level="INFO")  # Log ra console
-        logger.add(self.log_file, format="{time} {level} {message}", level="INFO", rotation="10MB")  # Log ra file
+        logger.add(
+            sys.stdout, format="{time} {level} {message}", level="INFO"
+        )  # Log ra console
+        logger.add(
+            self.log_file,
+            format="{time} {level} {message}",
+            level="INFO",
+            rotation="10MB",
+        )  # Log ra file
 
         print(f"Logging to {self.log_file}")
-        
+
     def write(self, message):
         """Ghi log thay thế print(), hỗ trợ live writing"""
         logger.info(message.strip())
@@ -197,7 +211,7 @@ class Logger:
 
     def flush(self):
         """Flush dữ liệu (không cần thiết do đã gọi flush() trong write)"""
-        pass  
+        pass
 
     @staticmethod
     def info(msg):
@@ -213,4 +227,3 @@ class Logger:
     def error(msg):
         """Ghi log mức ERROR"""
         logger.error(msg)
-
