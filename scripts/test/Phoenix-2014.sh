@@ -5,12 +5,12 @@ EPOCHS=100
 FINETUNE=""
 DEVICE="cpu"
 SEED=0
-RESUME="./outputs/Phoenix-2014-T/best_checkpoint.pth"
+RESUME="./outputs/Phoenix-2014/best_checkpoint.pth"
 START_EPOCH=0
 EVAL_FLAG= True
 TEST_ON_LAST_EPOCH="False"
 NUM_WORKERS=0
-CFG_PATH="configs/phoenix-2014t.yaml"
+CFG_PATH="configs/phoenix-2014.yaml"
 
 
 

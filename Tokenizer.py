@@ -29,7 +29,7 @@ class GlossTokenizer:
 
     def encode(self, _input, max_len=None, has_split=True, return_length=False):
         if not has_split:
-            _input = _input.replace("  ", " ")
+            _input = _input.replace("  ", " ").strip()
             _input = _input.split(self.split)
         attention_mask = torch.ones(len(_input), dtype=torch.long)
         inputs_ids = torch.tensor(
@@ -86,9 +86,6 @@ class GlossTokenizer:
 
     def decode(self, _input, skip_special_tokens=True):
         if type(_input) is dict:
-            tokens = _input["input_ids"]
-
-        elif "input_ids" in _input:
             tokens = _input["input_ids"]
         else:
             tokens = torch.tensor(_input)

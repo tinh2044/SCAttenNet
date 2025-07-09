@@ -3,44 +3,38 @@ import torch.nn as nn
 
 
 class ResidualBlock(nn.Module):
-    def __init__(self, in_dim, out_dim, downsample=False):
+    def __init__(self, in_dim, out_dim, downsample=False, num_tconv=0):
         super(ResidualBlock, self).__init__()
         self.downsample = downsample
         self.in_dim = in_dim
         self.out_dim = out_dim
 
-        self.need_projection = in_dim != out_dim
+        stride = 2 if downsample else 1
+        self.need_projection = in_dim != out_dim or downsample
+
         if self.need_projection:
-            self.projection = nn.Linear(in_dim, out_dim)
+            self.projection = nn.Conv1d(in_dim, out_dim, kernel_size=1, stride=stride)
 
-        self.linear1 = nn.Linear(in_dim, out_dim)
-        self.norm1 = nn.LayerNorm(out_dim)
+        self.conv1 = nn.Conv1d(in_dim, out_dim, kernel_size=3, stride=stride, padding=1)
+        self.norm1 = nn.BatchNorm1d(out_dim)
         self.relu = nn.ReLU()
-        self.linear2 = nn.Linear(out_dim, out_dim)
-        self.norm2 = nn.LayerNorm(out_dim)
-
-        if self.downsample:
-            self.pool = nn.MaxPool1d(kernel_size=2, stride=2)
+        self.conv2 = nn.Conv1d(out_dim, out_dim, kernel_size=3, stride=1, padding=1)
+        self.norm2 = nn.BatchNorm1d(out_dim)
 
     def forward(self, x):
         residual = x
 
+        out = self.conv1(x)
+        out = self.norm1(out)
+        out = self.relu(out)
+        out = self.conv2(out)
+        out = self.norm2(out)
+
         if self.need_projection:
             residual = self.projection(residual)
 
-        out = self.linear1(x)
-        out = self.norm1(out)
-        out = self.relu(out)
-        out = self.linear2(out)
-        out = self.norm2(out)
-
         out = out + residual
         out = self.relu(out)
-
-        if self.downsample:
-            out = out.permute(0, 2, 1)
-            out = self.pool(out)
-            out = out.permute(0, 2, 1)
 
         return out
 
@@ -52,94 +46,36 @@ class ResidualNetwork(nn.Module):
         self.residual_blocks = residual_blocks
         self.blocks = nn.ModuleList()
 
-        self.shortcuts = nn.ModuleList()
-
         for i in range(len(residual_blocks)):
             in_dim = residual_blocks[i - 1] if i > 0 else residual_blocks[0]
             out_dim = residual_blocks[i]
-            downsample = i % 2 == 0
-            self.blocks.append(ResidualBlock(in_dim, out_dim, downsample=downsample))
-
-            if i > 0:
-                need_projection = (
-                    residual_blocks[i - 2] != residual_blocks[i]
-                    if i > 1
-                    else residual_blocks[0] != residual_blocks[i]
-                )
-                need_downsample = (i % 2 == 0) and ((i - 1) % 2 == 1)
-
-                if need_projection or need_downsample:
-                    shortcut = nn.Sequential()
-                    if need_projection:
-                        shortcut_in_dim = (
-                            residual_blocks[i - 2] if i > 1 else residual_blocks[0]
-                        )
-                        shortcut.add_module(
-                            "projection", nn.Linear(shortcut_in_dim, residual_blocks[i])
-                        )
-
-                    if need_downsample:
-                        shortcut.add_module("permute1", PermuteLayer(0, 2, 1))
-                        shortcut.add_module(
-                            "pool", nn.MaxPool1d(kernel_size=2, stride=2)
-                        )
-                        shortcut.add_module("permute2", PermuteLayer(0, 2, 1))
-
-                    self.shortcuts.append(shortcut)
-                else:
-                    self.shortcuts.append(None)
+            downsample = i in [0, 2]
+            self.blocks.append(
+                ResidualBlock(in_dim, out_dim, downsample=downsample, num_tconv=i + 1)
+            )
 
     def forward(self, x):
+        # Input shape: (B, D, T)
         outputs = []
-        shortcut_outputs = [x]
 
         for i, block in enumerate(self.blocks):
-            if i == 0:
-                x = block(x)
-            else:
-                shortcut_idx = i - 2 if i > 1 else 0
-                shortcut_input = shortcut_outputs[shortcut_idx]
-
-                if self.shortcuts[i - 1] is not None:
-                    shortcut_output = self.shortcuts[i - 1](shortcut_input)
-                else:
-                    shortcut_output = shortcut_input
-
-                block_output = block(x)
-
-                if shortcut_output.shape == block_output.shape:
-                    x = block_output + shortcut_output
-                else:
-                    x = block_output
-
+            x = block(x)
             outputs.append(x)
-            shortcut_outputs.append(x)
 
         return x, outputs
 
 
-class PermuteLayer(nn.Module):
-    def __init__(self, *dims):
-        super(PermuteLayer, self).__init__()
-        self.dims = dims
-
-    def forward(self, x):
-        return x.permute(*self.dims)
-
-
 if __name__ == "__main__":
     batch_size = 32
-    T = 181
+    T = 180
     initial_dim = 256
 
-    residual_blocks = [256, 512, 1024]
+    residual_blocks = [256, 512, 1024, 2048]
 
     model = ResidualNetwork(residual_blocks)
-    input_tensor = torch.randn(batch_size, T, initial_dim)
+    input_tensor = torch.randn(batch_size, initial_dim, T)
 
     final_output, intermediate_outputs = model(input_tensor)
-
-    torch.save(model.state_dict(), "ResidualNetwork.pth")
 
     print(f"Input shape: {input_tensor.shape}")
     print(f"Final output shape: {final_output.shape}")
@@ -155,12 +91,12 @@ if __name__ == "__main__":
     ]
 
     dynamic_axes = {
-        "input": {0: "batch_size", 1: "sequence_length"},
-        "final_output": {0: "batch_size", 1: "sequence_length"},
+        "input": {0: "batch_size", 2: "sequence_length"},
+        "final_output": {0: "batch_size", 2: "sequence_length"},
     }
 
     for i in range(len(residual_blocks)):
         dynamic_axes[f"intermediate_output_{i}"] = {
             0: "batch_size",
-            1: "sequence_length",
+            2: "sequence_length",
         }

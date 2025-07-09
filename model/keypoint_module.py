@@ -2,9 +2,10 @@ from torch import nn
 from model.layers import CoordinateMapping
 from model.encoder import Encoder
 from model.decoder import Decoder
+from model.residual import ResidualNetwork
 
 
-class KeypointModule(nn.Module):
+class SeparativeCoordinateAttention(nn.Module):
     def __init__(self, joint_idx, num_frame, cfg=None):
         super().__init__()
         self.joint_idx = joint_idx
@@ -13,6 +14,8 @@ class KeypointModule(nn.Module):
 
         self.x_coord_module = Encoder(cfg)
         self.y_coord_module = Decoder(cfg)
+
+        self.residual = ResidualNetwork(cfg["residual_blocks"])
 
     def forward(self, keypoints, attention_mask=None):
         x = keypoints[:, :, :, 0]
@@ -28,5 +31,8 @@ class KeypointModule(nn.Module):
             y_embed=y_embed,
             attention_mask=attention_mask,
         )
+        y_embed = y_embed.permute(0, 2, 1)
+        outputs, _ = self.residual(y_embed)
+        print(outputs.shape)
 
-        return y_embed
+        return outputs

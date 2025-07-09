@@ -18,7 +18,7 @@ import torch.distributed as dist
 from optimizer import build_optimizer, build_scheduler
 from Tokenizer import GlossTokenizer
 from dataset import SLR_Dataset
-from model import SCAttentNet
+from model import MSCA_Net
 
 from opt import train_one_epoch, evaluate_fn
 import utils
@@ -131,9 +131,7 @@ def main(args, cfg):
     )
 
     print("Creating model:")
-    model = SCAttentNet(
-        cfg=cfg["model"], gloss_tokenizer=gloss_tokenizer, device=device
-    )
+    model = MSCA_Net(cfg=cfg["model"], gloss_tokenizer=gloss_tokenizer, device=device)
     model = model.to(device)
     n_parameters = utils.count_model_parameters(model)
 
