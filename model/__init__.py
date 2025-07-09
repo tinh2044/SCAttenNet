@@ -122,10 +122,10 @@ class MSCA_Net(torch.nn.Module):
             )
 
             if torch.isnan(l) or torch.isinf(l):
-                raise ValueError(f"NaN or inf in {k}_loss")
-
-            outputs[f"{k}_loss"] = l
-            outputs["total_loss"] += outputs[f"{k}_loss"]
+                print(f"NaN or inf in {k}_loss")
+            else:
+                outputs[f"{k}_loss"] = l
+                outputs["total_loss"] += outputs[f"{k}_loss"]
 
         if self.self_distillation:
             for student, weight in self.cfg["distillation_weight"].items():
