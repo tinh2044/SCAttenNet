@@ -107,6 +107,9 @@ class MSCA_Net(torch.nn.Module):
 
         outputs = {**head_outputs, "input_lengths": src_input["valid_len_in"]}
         outputs["total_loss"] = 0
+
+        for k, v in outputs.items():
+            print(k, v.shape)
         for k in ["left", "right", "body", "fuse"]:
             if torch.isnan(outputs[f"{k}_gloss_logits"]).any():
                 raise ValueError(f"NaN in {k}_gloss_logits")
@@ -163,20 +166,9 @@ class MSCA_Net(torch.nn.Module):
                 f"target_lengths size {lengths.shape[0]} doesn't match batch_size {batch_size}"
             )
 
-        seq_len = logits.shape[0]
-        input_lengths = torch.clamp(input_lengths, max=seq_len)
-
-        input_lengths = torch.clamp(input_lengths, min=1)
-        lengths = torch.clamp(lengths, min=1)
-
-        input_lengths = input_lengths.long()
-        lengths = lengths.long()
-
-        log_probs = torch.log_softmax(logits, dim=-1)
-
         try:
             loss = self.loss_fn(
-                log_probs=log_probs,
+                log_probs=logits.permute(1, 0, 2).log_softmax(dim=-1).permute(1, 2, 0),
                 targets=labels,
                 input_lengths=input_lengths,
                 target_lengths=lengths,
@@ -184,10 +176,6 @@ class MSCA_Net(torch.nn.Module):
 
             loss = loss.mean()
         except Exception as e:
-            print(f"  log_probs range: [{log_probs.min():.4f}, {log_probs.max():.4f}]")
-            print(f"  labels unique values: {torch.unique(labels)}")
-            print(f"  Any NaN in log_probs: {torch.isnan(log_probs).any()}")
-            print(f"  Any inf in log_probs: {torch.isinf(log_probs).any()}")
             raise e
 
         return loss
