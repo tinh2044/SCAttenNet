@@ -1,6 +1,7 @@
 import torch
 import json
 from collections import defaultdict
+import datetime
 import math
 import sys
 from metrics import wer_list
@@ -9,9 +10,13 @@ from logger import MetricLogger, SmoothedValue
 from utils import ctc_decode
 
 
-def train_one_epoch(args, model, data_loader, optimizer, epoch, print_freq=1):
+def train_one_epoch(
+    args, model, data_loader, optimizer, epoch, print_freq=1, log_dir="log/train"
+):
     model.train()
-    metric_logger = MetricLogger(delimiter="  ")
+    timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+    log_file = f"{log_dir}/epoch_{epoch}_({timestamp}).log"
+    metric_logger = MetricLogger(delimiter="  ", log_dir=log_dir, file_name=log_file)
     metric_logger.add_meter("lr", SmoothedValue(window_size=1, fmt="{value:.6f}"))
     header = f"Training epoch: [{epoch}/{args.epochs}]"
     for step, (src_input) in enumerate(
@@ -51,9 +56,12 @@ def evaluate_fn(
     print_freq=1,
     results_path=None,
     tokenizer=None,
+    log_dir="log/test",
 ):
+    timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+    log_file = f"{log_dir}/epoch_{epoch}_({timestamp}).log"
     model.eval()
-    metric_logger = MetricLogger(delimiter="  ")
+    metric_logger = MetricLogger(log_dir=log_dir, file_name=log_file)
     header = f"Test epoch: [{epoch}/{args.epochs}]"
     print_freq = 10
     results = defaultdict(dict)
@@ -65,6 +73,9 @@ def evaluate_fn(
             output = model(src_input)
 
             for k, gls_logits in output.items():
+                if "loss" in k and "gloss" not in k:
+                    metric_logger.update(**{k: gls_logits})
+                    continue
                 if "gloss_logits" not in k:
                     continue
                 logits_name = k.replace("gloss_logits", "")

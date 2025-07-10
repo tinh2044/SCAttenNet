@@ -67,7 +67,9 @@ def get_args_parser():
 
 
 def main(args, cfg):
-    # seed = args.seed
+    model_dir = cfg["training"]["model_dir"]
+    log_dir = f"{model_dir}/log"
+
     device = "cuda" if torch.cuda.is_available() else "cpu"
 
     utils.init_distributed_mode(args)
@@ -79,7 +81,6 @@ def main(args, cfg):
     random.seed(seed)
     cudnn.benchmark = False
 
-    print("Creating dataset:")
     cfg_data = cfg["data"]
     gloss_tokenizer = GlossTokenizer(config["gloss_tokenizer"])
     train_data = SLR_Dataset(
@@ -101,8 +102,6 @@ def main(args, cfg):
         cfg=cfg_data,
         split="test",
     )
-
-    print("Creating dataloader:")
 
     train_dataloader = DataLoader(
         train_data,
@@ -130,7 +129,6 @@ def main(args, cfg):
         pin_memory=True,
     )
 
-    print("Creating model:")
     model = MSCA_Net(cfg=cfg["model"], gloss_tokenizer=gloss_tokenizer, device=device)
     model = model.to(device)
     n_parameters = utils.count_model_parameters(model)
@@ -168,6 +166,8 @@ def main(args, cfg):
             print("Loading optimizer and scheduler")
             optimizer.load_state_dict(checkpoint["optimizer"])
             scheduler.load_state_dict(checkpoint["scheduler"])
+
+            print(f"New learning rate : {scheduler.get_last_lr()[0]}")
         args.start_epoch = checkpoint["epoch"] + 1
 
         print("Missing keys: \n", "\n".join(ret.missing_keys))
@@ -186,8 +186,9 @@ def main(args, cfg):
             epoch=0,
             beam_size=5,
             print_freq=args.print_freq,
-            results_path="./dev_results.json",
+            results_path=f"{model_dir}/dev_results.json",
             tokenizer=gloss_tokenizer,
+            log_dir=f"{log_dir}/eval/dev",
         )
         print(
             f"Dev loss of the network on the {len(dev_dataloader)} test videos: {dev_stats['loss']:.3f}"
@@ -200,8 +201,9 @@ def main(args, cfg):
             epoch=0,
             beam_size=5,
             print_freq=args.print_freq,
-            results_path="./test_results.json",
+            results_path=f"{model_dir}/test_results.json",
             tokenizer=gloss_tokenizer,
+            log_dir=f"{log_dir}/eval/test",
         )
         print(
             f"Test loss of the network on the {len(test_dataloader)} test videos: {test_stats['loss']:.3f}"
@@ -213,8 +215,9 @@ def main(args, cfg):
             epoch=0,
             beam_size=5,
             print_freq=args.print_freq,
-            results_path="./train_results.json",
+            results_path=f"{model_dir}/train_results.json",
             tokenizer=gloss_tokenizer,
+            log_dir=f"{log_dir}/eval/train",
         )
         print(
             f"Train loss of the network on the {len(train_dataloader)} test videos: {train_stats['loss']:.3f}"
@@ -222,12 +225,20 @@ def main(args, cfg):
         return
 
     print(f"Training on {device}")
-    print(f"Start training for {args.epochs} epochs")
+    print(
+        f"Start training for {args.epochs} epochs and start epoch: {args.start_epoch}"
+    )
     start_time = time.time()
-    min_loss = 200
+    min_wer = 200
     for epoch in range(args.start_epoch, args.epochs):
         train_results = train_one_epoch(
-            args, model, train_dataloader, optimizer, epoch, print_freq=args.print_freq
+            args,
+            model,
+            train_dataloader,
+            optimizer,
+            epoch,
+            print_freq=args.print_freq,
+            log_dir=f"{log_dir}/train",
         )
         scheduler.step()
         checkpoint_paths = [output_dir / f"checkpoint_{epoch}.pth"]
@@ -247,16 +258,27 @@ def main(args, cfg):
         print()
         test_results = evaluate_fn(
             args,
+            test_dataloader,
+            model,
+            epoch,
+            beam_size=5,
+            print_freq=args.print_freq,
+            tokenizer=gloss_tokenizer,
+            log_dir=f"{log_dir}/eval/test",
+        )
+        dev_results = evaluate_fn(
+            args,
             dev_dataloader,
             model,
             epoch,
             beam_size=5,
             print_freq=args.print_freq,
             tokenizer=gloss_tokenizer,
+            log_dir=f"{log_dir}/eval/dev",
         )
 
-        if min_loss > test_results["wer"]:
-            min_loss = test_results["wer"]
+        if min_wer > test_results["wer"] or min_wer > dev_results["wer"]:
+            min_wer = min(test_results["wer"], dev_results["wer"])
             checkpoint_paths = [output_dir / "best_checkpoint.pth"]
             for checkpoint_path in checkpoint_paths:
                 utils.save_on_master(
@@ -268,7 +290,7 @@ def main(args, cfg):
                     },
                     checkpoint_path,
                 )
-        print(f"* DEV wer {test_results['wer']:.3f} Min DEV WER {min_loss}")
+        print(f"* DEV wer {test_results['wer']:.3f} Min DEV WER {min_wer}")
 
         log_results = {
             **{f"train_{k}": v for k, v in train_results.items()},
@@ -279,54 +301,6 @@ def main(args, cfg):
         print()
         with (output_dir / "log.txt").open("a") as f:
             f.write(json.dumps(log_results) + "\n")
-
-    if args.test_on_last_epoch:
-        checkpoint = torch.load(
-            str(output_dir) + "/best_checkpoint.pth", map_location="cpu"
-        )
-        model.load_state_dict(checkpoint["model"], strict=True)
-        dev_stats = evaluate_fn(
-            args,
-            config,
-            dev_dataloader,
-            model,
-            gloss_tokenizer,
-            epoch=0,
-            beam_size=config["testing"]["recognition"]["beam_size"],
-            generate_cfg={},
-            do_translation=config["do_translation"],
-            do_recognition=config["do_recognition"],
-            print_freq=args.print_freq,
-            results_path="./dev_results.json",
-        )
-        print(
-            f"Dev loss of the network on the {len(dev_dataloader)} test videos: {dev_stats['loss']:.3f}"
-        )
-        test_stats = evaluate_fn(
-            args,
-            config,
-            test_dataloader,
-            model,
-            gloss_tokenizer,
-            epoch=0,
-            beam_size=config["testing"]["recognition"]["beam_size"],
-            generate_cfg=config["testing"]["translation"],
-            do_translation=config["do_translation"],
-            do_recognition=config["do_recognition"],
-            print_freq=args.print_freq,
-            results_path="./test_results.json",
-        )
-        print(
-            f"Test loss of the network on the {len(test_dataloader)} test videos: {test_stats['loss']:.3f}"
-        )
-
-        with (output_dir / "log.txt").open("a") as f:
-            f.write(
-                json.dumps(
-                    {"Dev WER:": dev_stats["wer"], "Test WER:": test_stats["wer"]}
-                )
-                + "\n"
-            )
 
     total_time = time.time() - start_time
     total_time_str = str(datetime.timedelta(seconds=int(total_time)))
@@ -341,7 +315,7 @@ def init_ddp(local_rank):
 
 if __name__ == "__main__":
     os.environ["TOKENIZERS_PARALLELISM"] = "false"
-    parser = argparse.ArgumentParser("SignBART scripts", parents=[get_args_parser()])
+    parser = argparse.ArgumentParser("MSCA scripts", parents=[get_args_parser()])
     args = parser.parse_args()
     with open(args.cfg_path, "r+", encoding="utf-8") as f:
         config = yaml.load(f, Loader=yaml.FullLoader)

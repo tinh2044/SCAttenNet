@@ -75,10 +75,23 @@ class SmoothedValue(object):
 
 
 class MetricLogger(object):
-    def __init__(self, delimiter="\t", log_dir="logs", prefix="train"):
+    def __init__(self, delimiter=", ", log_dir="logs", file_name="", use_colors=True):
         self.meters = defaultdict(SmoothedValue)
         self.delimiter = delimiter
-        self.logger = Logger(log_dir=log_dir, prefix=prefix)
+        self.logger = Logger(log_dir=log_dir, file_name=file_name)
+        self.use_colors = use_colors
+
+        # ANSI color codes for different types of metrics
+        self.color_schemes = {
+            "loss": {"key": "\033[91m", "value": "\033[0m"},  # Red
+            "lr": {"key": "\033[94m", "value": "\033[0m"},  # Blue
+            "time": {"key": "\033[93m", "value": "\033[0m"},  # Yellow
+            "data": {"key": "\033[96m", "value": "\033[0m"},  # Cyan
+            "memory": {"key": "\033[95m", "value": "\033[0m"},  # Magenta
+            "eta": {"key": "\033[92m", "value": "\033[0m"},  # Green
+            "step": {"key": "\033[1m", "value": "\033[0m"},  # Bold
+            "default": {"key": "\033[0m", "value": "\033[0m"},  # Reset
+        }
 
     def update(self, **kwargs):
         for k, v in kwargs.items():
@@ -99,8 +112,21 @@ class MetricLogger(object):
     def __str__(self):
         loss_str = []
         for name, meter in self.meters.items():
-            loss_str.append("{}: {}".format(name, str(meter)))
+            if self.use_colors:
+                color_scheme = self._get_color_scheme(name)
+                colored_name = f"{color_scheme['key']}{name}{color_scheme['value']}"
+                colored_value = f"{color_scheme['value']}{str(meter)}"
+                loss_str.append(f"{colored_name}: {colored_value}")
+            else:
+                loss_str.append("{}: {}".format(name, str(meter)))
         return self.delimiter.join(loss_str)
+
+    def _get_color_scheme(self, metric_name):
+        """Get color scheme for a metric based on its name"""
+        for key, scheme in self.color_schemes.items():
+            if key in metric_name.lower():
+                return scheme
+        return self.color_schemes["default"]
 
     def synchronize_between_processes(self):
         for meter in self.meters.values():
@@ -165,28 +191,61 @@ class MetricLogger(object):
             self.logger.info(final_str)
 
     def _format_log(self, i, total_len, eta_string, iter_time, data_time, MB):
-        if torch.cuda.is_available():
-            return "Step [{}/{}]\tETA: {}\t{}\tTime: {}\tData: {}\tMax Memory: {:.0f}MB".format(
-                i,
-                total_len,
-                eta_string,
-                str(self),
-                str(iter_time),
-                str(data_time),
-                torch.cuda.max_memory_allocated() / MB,
-            )
+        if self.use_colors:
+            # Colored version with ANSI codes
+            step_color = self.color_schemes["step"]["key"]
+            eta_color = self.color_schemes["eta"]["key"]
+            time_color = self.color_schemes["time"]["key"]
+            data_color = self.color_schemes["data"]["key"]
+            memory_color = self.color_schemes["memory"]["key"]
+            reset_color = self.color_schemes["default"]["value"]
+
+            if torch.cuda.is_available():
+                return f"{step_color}Step [{i}/{total_len}]{reset_color}{self.delimiter}{eta_color}ETA: {eta_string}{reset_color}{self.delimiter}{str(self)}{self.delimiter}{time_color}Time: {str(iter_time)}{reset_color}{self.delimiter}{data_color}Data: {str(data_time)}{reset_color}{self.delimiter}{memory_color}Max Memory: {torch.cuda.max_memory_allocated() / MB:.0f}MB{reset_color}"
+            else:
+                return f"{step_color}Step [{i}/{total_len}]{reset_color}{self.delimiter}{eta_color}ETA: {eta_string}{reset_color}{self.delimiter}{str(self)}{self.delimiter}{time_color}Time: {str(iter_time)}{reset_color}{self.delimiter}{data_color}Data: {str(data_time)}{reset_color}"
         else:
-            return "Step [{}/{}]\tETA: {}\t{}\tTime: {}\tData: {}".format(
-                i, total_len, eta_string, str(self), str(iter_time), str(data_time)
-            )
+            # Non-colored version
+            if torch.cuda.is_available():
+                return "Step [{}/{}]{}ETA: {}{}{}{}Time: {}{}Data: {}{}Max Memory: {:.0f}MB".format(
+                    i,
+                    total_len,
+                    self.delimiter,
+                    eta_string,
+                    self.delimiter,
+                    str(self),
+                    self.delimiter,
+                    str(iter_time),
+                    self.delimiter,
+                    str(data_time),
+                    self.delimiter,
+                    torch.cuda.max_memory_allocated() / MB,
+                )
+            else:
+                return "Step [{}/{}]{}ETA: {}{}{}{}Time: {}{}Data: {}".format(
+                    i,
+                    total_len,
+                    self.delimiter,
+                    eta_string,
+                    self.delimiter,
+                    str(self),
+                    self.delimiter,
+                    str(iter_time),
+                    self.delimiter,
+                    str(data_time),
+                )
 
 
 class Logger:
-    def __init__(self, log_dir="logs", prefix="logfile"):
+    def __init__(self, log_dir="logs", file_name=""):
         os.makedirs(log_dir, exist_ok=True)
 
-        timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-        self.log_file = f"{log_dir}/{prefix}_{timestamp}.log"
+        # Fix file path construction
+        if file_name:
+            self.log_file = os.path.join(log_dir, file_name)
+        else:
+            timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+            self.log_file = os.path.join(log_dir, f"log_{timestamp}.log")
 
         # Remove default handler
         logger.remove()
