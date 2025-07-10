@@ -68,6 +68,7 @@ def evaluate_fn(
                 if "gloss_logits" not in k:
                     continue
                 logits_name = k.replace("gloss_logits", "")
+
                 ctc_decode_output = ctc_decode(
                     gloss_logits=gls_logits,
                     beam_size=beam_size,

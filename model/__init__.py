@@ -119,7 +119,11 @@ class MSCA_Net(torch.nn.Module):
                 labels=src_input["gloss_labels"],
                 lengths=src_input["gloss_lengths"],
                 logits=outputs[f"{k}_gloss_logits"],
-                input_lengths=src_input["valid_len_in"],
+                input_lengths=torch.full(
+                    (outputs[f"{k}_gloss_logits"].shape[1],),
+                    outputs[f"{k}_gloss_logits"].shape[0],
+                    dtype=torch.long,
+                ),
             )
 
             if torch.isnan(l) or torch.isinf(l):

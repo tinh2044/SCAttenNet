@@ -146,7 +146,6 @@ def count_model_parameters(model):
 
 
 def ctc_decode(gloss_logits, beam_size, input_lengths):
-    gloss_logits = gloss_logits.permute(1, 0, 2)
     gloss_logits = gloss_logits.cpu().detach().numpy()
     tf_gloss_logits = np.concatenate(
         (gloss_logits[:, :, 1:], gloss_logits[:, :, 0, None]),
@@ -249,22 +248,8 @@ def init_distributed_mode(args):
 
 
 def expand_frame_mask(mask, num_heads, num_keypoints, num_queries):
-    """
-    Expand mask từ (B, T) thành (B, H, T, K, Q)
-
-    Args:
-        mask (torch.Tensor): Tensor mask có shape (B, T)
-        num_heads (int): Số lượng attention heads (H)
-        num_keypoints (int): Số lượng keypoints (K)
-        num_queries (int): Số lượng truy vấn (Q)
-
-    Returns:
-        torch.Tensor: Mask có shape (B, H, T, K, Q)
-    """
-    # Thêm một chiều singleton để broadcast: (B, 1, T, 1, 1)
     mask = mask[:, None, :, None, None]
 
-    # Expand thành (B, H, T, K, Q)
     mask = mask.expand(-1, num_heads, -1, num_keypoints, num_queries)
 
     return mask
@@ -278,7 +263,7 @@ def check_state_dict(model, state_dict):
             print(f"Key {key} not found in model state dict")
         else:
             if state_dict[key].shape != model_state_dict[key].shape:
-                print(f"Has different shape in model state dict")
+                print("Has different shape in model state dict")
                 print(f"Key: {key}")
                 print(f"State dict shape: {state_dict[key].shape}")
                 print(f"Model state dict shape: {model_state_dict[key].shape}")
