@@ -15,8 +15,11 @@ def train_one_epoch(
 ):
     model.train()
     timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-    log_file = f"{log_dir}/epoch_{epoch}_({timestamp}).log"
-    metric_logger = MetricLogger(delimiter="  ", log_dir=log_dir, file_name=log_file)
+    metric_logger = MetricLogger(
+        delimiter="  ",
+        log_dir=log_dir,
+        file_name=f"epoch_{epoch}_({timestamp}).log",
+    )
     metric_logger.add_meter("lr", SmoothedValue(window_size=1, fmt="{value:.6f}"))
     header = f"Training epoch: [{epoch}/{args.epochs}]"
     for step, (src_input) in enumerate(
@@ -59,9 +62,10 @@ def evaluate_fn(
     log_dir="log/test",
 ):
     timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-    log_file = f"{log_dir}/epoch_{epoch}_({timestamp}).log"
     model.eval()
-    metric_logger = MetricLogger(log_dir=log_dir, file_name=log_file)
+    metric_logger = MetricLogger(
+        log_dir=log_dir, file_name=f"epoch_{epoch}_({timestamp}).log"
+    )
     header = f"Test epoch: [{epoch}/{args.epochs}]"
     print_freq = 10
     results = defaultdict(dict)

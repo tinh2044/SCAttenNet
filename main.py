@@ -264,7 +264,7 @@ def main(args, cfg):
             beam_size=5,
             print_freq=args.print_freq,
             tokenizer=gloss_tokenizer,
-            log_dir=f"{log_dir}/eval/test",
+            log_dir=f"{log_dir}/test",
         )
         dev_results = evaluate_fn(
             args,
@@ -274,7 +274,7 @@ def main(args, cfg):
             beam_size=5,
             print_freq=args.print_freq,
             tokenizer=gloss_tokenizer,
-            log_dir=f"{log_dir}/eval/dev",
+            log_dir=f"{log_dir}/dev",
         )
 
         if min_wer > test_results["wer"] or min_wer > dev_results["wer"]:
