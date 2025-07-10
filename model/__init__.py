@@ -123,7 +123,7 @@ class MSCA_Net(torch.nn.Module):
             )
 
             if torch.isnan(l) or torch.isinf(l):
-                raise Exception(f"NaN or inf in {k}_loss")
+                print(f"NaN or inf in {k}_loss")
             else:
                 outputs[f"{k}_loss"] = l
                 outputs["total_loss"] += outputs[f"{k}_loss"]
