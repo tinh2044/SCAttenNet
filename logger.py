@@ -183,47 +183,49 @@ class MetricLogger(object):
 
 class Logger:
     def __init__(self, log_dir="logs", prefix="logfile"):
-        os.makedirs(log_dir, exist_ok=True)  # Tạo thư mục nếu chưa có
+        os.makedirs(log_dir, exist_ok=True)
 
         timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
         self.log_file = f"{log_dir}/{prefix}_{timestamp}.log"
 
+        # Remove default handler
+        logger.remove()
+
+        # Add handlers for both console and file with custom format
         logger.add(
-            sys.stdout, format="{time} {level} {message}", level="INFO"
-        )  # Log ra console
+            sys.stdout,
+            format="<green>{time:YYYY-MM-DD HH:mm:ss}</green> | {message}",
+            level="INFO",
+            colorize=True,
+        )
         logger.add(
             self.log_file,
-            format="{time} {level} {message}",
+            format="{time:YYYY-MM-DD HH:mm:ss} | {message}",
             level="INFO",
             rotation="10MB",
-        )  # Log ra file
+        )
 
-        print(f"Logging to {self.log_file}")
+        logger.info(f"Logging to {self.log_file}")
 
     def write(self, message):
-        """Ghi log thay thế print(), hỗ trợ live writing"""
+        """Write log using loguru"""
         logger.info(message.strip())
-        with open(self.log_file, "a", encoding="utf-8") as f:
-            f.write(message.strip() + "\n")  # Ghi vào file ngay lập tức
-            f.flush()  # Đảm bảo ghi ngay
-
-        # sys.__stdout__.write(message)  # Ghi ra console ngay lập tức
 
     def flush(self):
-        """Flush dữ liệu (không cần thiết do đã gọi flush() trong write)"""
+        """Flush is handled by loguru"""
         pass
 
     @staticmethod
     def info(msg):
-        """Ghi log mức INFO"""
+        """Log at INFO level"""
         logger.info(msg)
 
     @staticmethod
     def warning(msg):
-        """Ghi log mức WARNING"""
+        """Log at WARNING level"""
         logger.warning(msg)
 
     @staticmethod
     def error(msg):
-        """Ghi log mức ERROR"""
+        """Log at ERROR level"""
         logger.error(msg)
