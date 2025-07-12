@@ -19,6 +19,9 @@ class RecognitionHead(nn.Module):
         self.body_gloss_classifier = nn.Linear(
             cfg["residual_blocks"][-1], len(gloss_tokenizer)
         )
+        self.fuse_coord_classifier = nn.Linear(
+            cfg["residual_blocks"][-1], len(gloss_tokenizer)
+        )
 
         self.fuse_alignment_head = FeatureAlignment(
             **cfg["fuse_alignment"], cls_num=len(gloss_tokenizer)
@@ -40,11 +43,13 @@ class RecognitionHead(nn.Module):
         right_logits = self.right_gloss_classifier(right_output)
         fuse_logits = self.fuse_alignment_head(fuse_output)
         body_logits = self.body_gloss_classifier(body_output)
+        fuse_coord_logits = self.fuse_coord_classifier(fuse_output)
         outputs = {
             "fuse_gloss_logits": fuse_logits,
             "left_gloss_logits": left_logits,
             "right_gloss_logits": right_logits,
             "body_gloss_logits": body_logits,
+            "fuse_coord_logits": fuse_coord_logits,
         }
 
         return outputs
@@ -114,23 +119,27 @@ class MSCA_Net(torch.nn.Module):
             if torch.isinf(outputs[f"{k}_gloss_logits"]).any():
                 raise ValueError(f"inf in {k}_gloss_logits")
 
-        for k in ["left", "right", "body", "fuse"]:
-            l = self.compute_loss(
-                labels=src_input["gloss_labels"],
-                lengths=src_input["gloss_lengths"],
-                logits=outputs[f"{k}_gloss_logits"],
-                input_lengths=torch.full(
-                    (outputs[f"{k}_gloss_logits"].shape[1],),
-                    outputs[f"{k}_gloss_logits"].shape[0],
-                    dtype=torch.long,
-                ),
-            )
-
-            if torch.isnan(l) or torch.isinf(l):
-                print(f"NaN or inf in {k}_loss")
-            else:
-                outputs[f"{k}_loss"] = l
-                outputs["total_loss"] += outputs[f"{k}_loss"]
+        outputs["fuse_loss"] = self.compute_loss(
+            labels=src_input["gloss_labels"],
+            lengths=src_input["gloss_lengths"],
+            logits=outputs["fuse_gloss_logits"],
+            input_lengths=torch.full(
+                (outputs["fuse_gloss_logits"].shape[1],),
+                outputs["fuse_gloss_logits"].shape[0],
+                dtype=torch.long,
+            ),
+        )
+        outputs["fuse_coord_loss"] = self.compute_loss(
+            labels=src_input["gloss_labels"],
+            lengths=src_input["gloss_lengths"],
+            logits=outputs["fuse_coord_logits"],
+            input_lengths=torch.full(
+                (outputs["fuse_coord_logits"].shape[1],),
+                outputs["fuse_coord_logits"].shape[0],
+                dtype=torch.long,
+            ),
+        )
+        outputs["total_loss"] += outputs["fuse_loss"] + outputs["fuse_coord_loss"]
 
         if self.self_distillation:
             for student, weight in self.cfg["distillation_weight"].items():
