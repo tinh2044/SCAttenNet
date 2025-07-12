@@ -30,12 +30,12 @@ def train_one_epoch(
         loss = output["total_loss"]
         loss_value = loss.item()
         with torch.autograd.set_detect_anomaly(True):
-            if torch.isnan(loss) or torch.isinf(loss):
+            if not (torch.isnan(loss) or torch.isinf(loss)):
+                loss.backward()
+                torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
+                optimizer.step()
+            else:
                 print("NaN loss")
-                loss = torch.tensor(100)
-            loss.backward()
-            torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
-        optimizer.step()
         model.zero_grad()
         if not math.isfinite(loss):
             print("Loss is {}, stopping training".format(loss_value))
