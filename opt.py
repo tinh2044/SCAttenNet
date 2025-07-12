@@ -28,7 +28,6 @@ def train_one_epoch(
         optimizer.zero_grad()
         output = model(src_input)
         loss = output["total_loss"]
-        loss_value = loss.item()
         with torch.autograd.set_detect_anomaly(True):
             if not (torch.isnan(loss) or torch.isinf(loss)):
                 loss.backward()
@@ -37,9 +36,6 @@ def train_one_epoch(
             else:
                 print("NaN loss")
         model.zero_grad()
-        if not math.isfinite(loss):
-            print("Loss is {}, stopping training".format(loss_value))
-            sys.exit(1)
         for k, v in output.items():
             if "loss" in k and "gloss" not in k:
                 # print(k, v)
