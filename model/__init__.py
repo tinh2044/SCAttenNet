@@ -164,7 +164,7 @@ class MSCA_Net(torch.nn.Module):
                 input_lengths=input_lengths,
                 target_lengths=lengths,
             )
-            loss = loss / logits.shape[1]
+            loss = loss.mean()
 
         except Exception as e:
             print(f"Error in CTC loss: {str(e)}")
