@@ -74,7 +74,7 @@ class MSCA_Net(torch.nn.Module):
         )
         self.recognition_head = RecognitionHead(cfg, gloss_tokenizer)
 
-        self.loss_fn = nn.CTCLoss(reduction="mean", zero_infinity=False, blank=0)
+        self.loss_fn = nn.CTCLoss(reduction="none", zero_infinity=False, blank=0)
         self.distillation_loss = SeqKD()
 
     def forward(self, src_input, **kwargs):
@@ -164,6 +164,7 @@ class MSCA_Net(torch.nn.Module):
                 input_lengths=input_lengths,
                 target_lengths=lengths,
             )
+            loss = loss / logits.shape[1]
 
         except Exception as e:
             print(f"Error in CTC loss: {str(e)}")
