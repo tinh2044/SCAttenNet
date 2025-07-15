@@ -36,11 +36,11 @@ class RecognitionHead(nn.Module):
     ):
         left_logits = self.left_gloss_classifier(left_output)
         right_logits = self.right_gloss_classifier(right_output)
-        fuse_logits = self.fuse_alignment_head(fuse_output.permute(1, 0, 2))
+        # fuse_logits = self.fuse_alignment_head(fuse_output.permute(1, 0, 2))
         body_logits = self.body_gloss_classifier(body_output)
         fuse_coord_logits = self.fuse_coord_classifier(fuse_output)
         outputs = {
-            "alignment_gloss_logits": fuse_logits,
+            # "alignment_gloss_logits": fuse_logits,
             "left": left_logits,
             "right": right_logits,
             "body": body_logits,
@@ -115,12 +115,12 @@ class MSCA_Net(torch.nn.Module):
             "total_loss": 0,
         }
 
-        outputs["alignment_loss"] = self.compute_loss(
-            labels=src_input["gloss_labels"],
-            tgt_lengths=src_input["gloss_lengths"],
-            logits=outputs["alignment_gloss_logits"],
-            input_lengths=outputs["input_lengths"],
-        )
+        # outputs["alignment_loss"] = self.compute_loss(
+        #     labels=src_input["gloss_labels"],
+        #     tgt_lengths=src_input["gloss_lengths"],
+        #     logits=outputs["alignment_gloss_logits"],
+        #     input_lengths=outputs["input_lengths"],
+        # )
         outputs["fuse_coord_loss"] = self.compute_loss(
             labels=src_input["gloss_labels"],
             tgt_lengths=src_input["gloss_lengths"],
@@ -128,20 +128,20 @@ class MSCA_Net(torch.nn.Module):
             input_lengths=outputs["input_lengths"],
         )
 
-        if torch.isnan(outputs["alignment_loss"]) or torch.isinf(
-            outputs["alignment_loss"]
-        ):
-            raise ValueError("NaN or inf in alignment_loss")
+        # if torch.isnan(outputs["alignment_loss"]) or torch.isinf(
+        #     outputs["alignment_loss"]
+        # ):
+        #     raise ValueError("NaN or inf in alignment_loss")
         if torch.isnan(outputs["fuse_coord_loss"]) or torch.isinf(
             outputs["fuse_coord_loss"]
         ):
             raise ValueError("NaN or inf in fuse_coord_loss")
 
-        outputs["total_loss"] += outputs["alignment_loss"] + outputs["fuse_coord_loss"]
+        outputs["total_loss"] += outputs["fuse_coord_loss"]
 
         if self.self_distillation:
             for student, weight in self.cfg["distillation_weight"].items():
-                teacher_logits = outputs["alignment_gloss_logits"]
+                teacher_logits = outputs["fuse_coord_gloss_logits"]
                 teacher_logits = teacher_logits.detach()
                 student_logits = outputs[f"{student}"]
 
