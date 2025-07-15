@@ -74,10 +74,10 @@ def evaluate_fn(
             output = model(src_input)
 
             for k, gls_logits in output.items():
-                if "loss" in k and "gloss" not in k:
+                if "_loss" in k and "gloss" not in k:
                     metric_logger.update(**{k: gls_logits})
                     continue
-                if "fuse_gloss_logits" not in k:
+                if "gloss_logits" not in k:
                     continue
                 logits_name = k.replace("gloss_logits", "")
 
@@ -110,17 +110,18 @@ def evaluate_fn(
             gls_ref = [results[n]["gls_ref"] for n in results]
             gls_hyp = [results[n][hyp_name] for n in results]
             wer_results = wer_list(hypotheses=gls_hyp, references=gls_ref)
-            evaluation_results[k + "wer_list"] = wer_results
+            # evaluation_results[k + "wer_list"] = wer_results
+            evaluation_results[k + "wer"] = wer_results["wer"]
+            metric_logger.update(**{k + "wer": wer_results["wer"]})
             evaluation_results["wer"] = min(
                 wer_results["wer"], evaluation_results["wer"]
             )
-
         metric_logger.update(wer=evaluation_results["wer"])
-
         if results_path is not None:
             with open(results_path, "w") as f:
                 json.dump(results, f)
-
+    for k, v in evaluation_results.items():
+        print(f"{k}: {v:.3f}")
     print("* Averaged results:", metric_logger)
     print("* DEV loss {losses.global_avg:.3f}".format(losses=metric_logger.loss))
 

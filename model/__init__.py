@@ -40,11 +40,11 @@ class RecognitionHead(nn.Module):
         body_logits = self.body_gloss_classifier(body_output)
         fuse_coord_logits = self.fuse_coord_classifier(fuse_output)
         outputs = {
-            "fuse_gloss_logits": fuse_logits,
-            "left_gloss_logits": left_logits,
-            "right_gloss_logits": right_logits,
-            "body_gloss_logits": body_logits,
-            "fuse_coord_logits": fuse_coord_logits,
+            "alignment_gloss_logits": fuse_logits,
+            "left": left_logits,
+            "right": right_logits,
+            "body": body_logits,
+            "fuse_coord_gloss_logits": fuse_coord_logits,
         }
         return outputs
 
@@ -103,42 +103,37 @@ class MSCA_Net(torch.nn.Module):
         head_outputs = self.recognition_head(
             left_embed, right_embed, fuse_embed, body_embed
         )
-        outputs = {**head_outputs, "input_lengths": src_input["valid_len_in"]}
-        outputs["total_loss"] = 0
 
-        for k in ["left", "right", "body", "fuse"]:
-            if torch.isnan(outputs[f"{k}_gloss_logits"]).any():
-                raise ValueError(f"NaN in {k}_gloss_logits")
-            if torch.isinf(outputs[f"{k}_gloss_logits"]).any():
-                raise ValueError(f"inf in {k}_gloss_logits")
+        for k, v in head_outputs.items():
+            if torch.isnan(v).any():
+                raise ValueError(f"NaN in {k}")
+            if torch.isinf(v).any():
+                raise ValueError(f"inf in {k}")
+        outputs = {
+            **head_outputs,
+            "input_lengths": src_input["valid_len_in"],
+            "total_loss": 0,
+        }
 
-        outputs["fuse_loss"] = self.compute_loss(
+        outputs["alignment_loss"] = self.compute_loss(
             labels=src_input["gloss_labels"],
             lengths=src_input["gloss_lengths"],
-            logits=outputs["fuse_gloss_logits"],
-            input_lengths=torch.full(
-                (outputs["fuse_gloss_logits"].shape[0],),
-                outputs["fuse_gloss_logits"].shape[1],
-                dtype=torch.long,
-            ),
+            logits=outputs["alignment_gloss_logits"],
+            input_lengths=outputs["input_lengths"],
         )
         outputs["fuse_coord_loss"] = self.compute_loss(
             labels=src_input["gloss_labels"],
             lengths=src_input["gloss_lengths"],
-            logits=outputs["fuse_coord_logits"],
-            input_lengths=torch.full(
-                (outputs["fuse_coord_logits"].shape[0],),
-                outputs["fuse_coord_logits"].shape[1],
-                dtype=torch.long,
-            ),
+            logits=outputs["fuse_coord_gloss_logits"],
+            input_lengths=outputs["input_lengths"],
         )
-        outputs["total_loss"] += outputs["fuse_loss"] + outputs["fuse_coord_loss"]
+        outputs["total_loss"] += outputs["alignment_loss"] + outputs["fuse_coord_loss"]
 
         if self.self_distillation:
             for student, weight in self.cfg["distillation_weight"].items():
-                teacher_logits = outputs["fuse_gloss_logits"]
+                teacher_logits = outputs["alignment_gloss_logits"]
                 teacher_logits = teacher_logits.detach()
-                student_logits = outputs[f"{student}_gloss_logits"]
+                student_logits = outputs[f"{student}"]
 
                 if torch.isnan(student_logits).any():
                     raise ValueError("NaN in student_logits")
