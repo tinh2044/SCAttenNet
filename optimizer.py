@@ -124,7 +124,7 @@ def build_scheduler(config, optimizer, scheduler_mode="max", hidden_size=0):
             ),
             "epoch",
         )
-    elif scheduler_name == "warmup_cosineannealing":
+    elif scheduler_name == "warmupcosineannealing":
         total_epochs = config.get("total_epochs", 100)
         warmup_ratio = config.get("warmup_ratio", 0.2)
         eta_min = config.get("eta_min", 0)
