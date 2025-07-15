@@ -1,4 +1,5 @@
 from torch import nn
+import torch
 from torch.nn import functional as F
 from model.attention import CrossAttention, SelfAttention, SelfCausalAttention
 from model.layers import CoordinateMapping, FeedForward, LearningPositionEmbedding
@@ -70,6 +71,12 @@ class CoordinateAttention(nn.Module):
             embed = residual + embed
             embed = self.last_layer_norm(embed)
 
+        if embed.dtype == torch.float16 and (
+            torch.isinf(embed).any() or torch.isnan(embed).any()
+        ):
+            clamp_value = torch.finfo(embed.dtype).max - 1000
+            embed = torch.clamp(embed, min=-clamp_value, max=clamp_value)
+
         return embed
 
 
@@ -98,6 +105,12 @@ class CoordinatesMerge(nn.Module):
         embed = self.mlp(embed)
         embed = residual + embed
         embed = self.last_layer_norm(embed)
+
+        if embed.dtype == torch.float16 and (
+            torch.isinf(embed).any() or torch.isnan(embed).any()
+        ):
+            clamp_value = torch.finfo(embed.dtype).max - 1000
+            embed = torch.clamp(embed, min=-clamp_value, max=clamp_value)
 
         return embed
 

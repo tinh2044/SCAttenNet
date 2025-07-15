@@ -142,11 +142,13 @@ def main(args, cfg):
         print("Missing keys: \n", "\n".join(ret.missing_keys))
         print("Unexpected keys: \n", "\n".join(ret.unexpected_keys))
 
-    optimizer = build_optimizer(config=config["training"]["optimization"], model=model)
+    optimizer = build_optimizer(config=cfg["training"]["optimization"], model=model)
+    # Update config with total epochs for warmup scheduler
+    cfg["training"]["optimization"]["total_epochs"] = args.epochs
     scheduler, scheduler_type = build_scheduler(
-        config=config["training"]["optimization"], optimizer=optimizer
+        config=cfg["training"]["optimization"], optimizer=optimizer
     )
-    output_dir = Path(config["training"]["model_dir"])
+    output_dir = Path(cfg["training"]["model_dir"])
 
     if args.resume:
         print(f"Resume training from {args.resume}")

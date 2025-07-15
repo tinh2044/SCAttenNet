@@ -199,8 +199,10 @@ training:
     learning_rate:
       default: 0.002
     optimizer: Adam
-    scheduler: cosineannealing
-    t_max: 100
+    scheduler: warmupcosineannealing
+    total_epochs: 100
+    warmup_ratio: 0.2
+    eta_min: 0.0001
     weight_decay: 2.0e-05
 
 model:

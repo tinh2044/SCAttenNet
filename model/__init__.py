@@ -127,6 +127,16 @@ class MSCA_Net(torch.nn.Module):
             logits=outputs["fuse_coord_gloss_logits"],
             input_lengths=outputs["input_lengths"],
         )
+
+        if torch.isnan(outputs["alignment_loss"]) or torch.isinf(
+            outputs["alignment_loss"]
+        ):
+            raise ValueError("NaN or inf in alignment_loss")
+        if torch.isnan(outputs["fuse_coord_loss"]) or torch.isinf(
+            outputs["fuse_coord_loss"]
+        ):
+            raise ValueError("NaN or inf in fuse_coord_loss")
+
         outputs["total_loss"] += outputs["alignment_loss"] + outputs["fuse_coord_loss"]
 
         if self.self_distillation:

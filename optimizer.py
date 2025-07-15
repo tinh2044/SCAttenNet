@@ -8,6 +8,8 @@ from torch.optim.lr_scheduler import _LRScheduler
 
 from torch.optim import Optimizer
 
+import math
+
 
 def build_gradient_clipper(config):
     clip_grad_fun = None
@@ -28,20 +30,19 @@ def build_gradient_clipper(config):
     return clip_grad_fun
 
 
-def build_optimizer(config, model) :
-
+def build_optimizer(config, model):
     optimizer_name = config.get("optimizer", "adam").lower()
     weight_decay = config.get("weight_decay", 0)
     eps = config.get("eps", 1.0e-8)
     parameters = []
-    base_lr = config['learning_rate'].pop('default')
+    base_lr = config["learning_rate"].pop("default")
     base_lr = float(base_lr)
     for n, p in model.named_children():
         lr_ = base_lr
-        for m, lr in config['learning_rate'].items():
+        for m, lr in config["learning_rate"].items():
             if m in n:
                 lr_ = lr
-        parameters.append({'params': p.parameters(), 'lr': lr_})
+        parameters.append({"params": p.parameters(), "lr": lr_})
 
     betas = config.get("betas", (0.9, 0.999))
     amsgrad = config.get("amsgrad", False)
@@ -99,7 +100,7 @@ def build_optimizer(config, model) :
         raise ValueError("Unknown optimizer {}.".format(optimizer_name))
 
 
-def build_scheduler(config, optimizer, scheduler_mode = 'max', hidden_size = 0):
+def build_scheduler(config, optimizer, scheduler_mode="max", hidden_size=0):
     scheduler_name = config["scheduler"].lower()
 
     if scheduler_name == "plateau":
@@ -123,8 +124,19 @@ def build_scheduler(config, optimizer, scheduler_mode = 'max', hidden_size = 0):
             ),
             "epoch",
         )
-    elif scheduler_name == 'warmup_cosineannealing':
-        return None
+    elif scheduler_name == "warmup_cosineannealing":
+        total_epochs = config.get("total_epochs", 100)
+        warmup_ratio = config.get("warmup_ratio", 0.2)
+        eta_min = config.get("eta_min", 0)
+        return (
+            WarmupCosineAnnealingScheduler(
+                optimizer=optimizer,
+                total_epochs=total_epochs,
+                warmup_ratio=warmup_ratio,
+                eta_min=eta_min,
+            ),
+            "epoch",
+        )
     elif scheduler_name == "cosineannealingwarmrestarts":
         return (
             lr_scheduler.CosineAnnealingWarmRestarts(
@@ -177,17 +189,18 @@ def build_scheduler(config, optimizer, scheduler_mode = 'max', hidden_size = 0):
             ),
             "step",
         )
+
     else:
         raise ValueError("Unknown learning scheduler {}.".format(scheduler_name))
 
 
 class NoamScheduler:
     def __init__(
-            self,
-            hidden_size: int,
-            optimizer: torch.optim.Optimizer,
-            factor: float = 1,
-            warmup: int = 4000,
+        self,
+        hidden_size: int,
+        optimizer: torch.optim.Optimizer,
+        factor: float = 1,
+        warmup: int = 4000,
     ):
         self.optimizer = optimizer
         self._step = 0
@@ -208,8 +221,8 @@ class NoamScheduler:
         """Implement `lrate` above"""
         step = self._step
         return self.factor * (
-                self.hidden_size ** (-0.5)
-                * min(step ** (-0.5), step * self.warmup ** (-1.5))
+            self.hidden_size ** (-0.5)
+            * min(step ** (-0.5), step * self.warmup ** (-1.5))
         )
 
     # pylint: disable=no-self-use
@@ -225,13 +238,13 @@ class WarmupExponentialDecayScheduler:
     """
 
     def __init__(
-            self,
-            optimizer: torch.optim.Optimizer,
-            peak_rate: float = 1.0e-3,
-            decay_length: int = 10000,
-            warmup: int = 4000,
-            decay_rate: float = 0.5,
-            min_rate: float = 1.0e-5,
+        self,
+        optimizer: torch.optim.Optimizer,
+        peak_rate: float = 1.0e-3,
+        decay_length: int = 10000,
+        warmup: int = 4000,
+        decay_rate: float = 0.5,
+        min_rate: float = 1.0e-5,
     ):
         """
         Warm-up, followed by exponential learning rate decay.
@@ -268,7 +281,7 @@ class WarmupExponentialDecayScheduler:
             rate = step * self.peak_rate / warmup
         else:
             exponent = (step - warmup) / self.decay_length
-            rate = self.peak_rate * (self.decay_rate ** exponent)
+            rate = self.peak_rate * (self.decay_rate**exponent)
         return max(rate, self.min_rate)
 
     # pylint: disable=no-self-use
@@ -284,9 +297,63 @@ class WarmupScheduler(_LRScheduler):
     def get_lr(self):
         # do not start from zero
         if self.last_epoch <= 0:
-            return [base_lr * 1 / (self.total_epochs + 1e-8) for base_lr in self.base_lrs]
+            return [
+                base_lr * 1 / (self.total_epochs + 1e-8) for base_lr in self.base_lrs
+            ]
         else:
-            return [base_lr * self.last_epoch / (self.total_epochs + 1e-8) for base_lr in self.base_lrs]
+            return [
+                base_lr * self.last_epoch / (self.total_epochs + 1e-8)
+                for base_lr in self.base_lrs
+            ]
 
     def finish(self):
         return self.last_epoch >= self.total_epochs
+
+
+class WarmupCosineAnnealingScheduler(_LRScheduler):
+    """
+    Warmup learning rate scheduler with cosine annealing.
+    Learning rate increases linearly during warmup period, then follows cosine annealing.
+    """
+
+    def __init__(
+        self, optimizer, total_epochs, warmup_ratio=0.2, eta_min=0, last_epoch=-1
+    ):
+        """
+        Args:
+            optimizer: Wrapped optimizer
+            total_epochs: Total number of training epochs
+            warmup_ratio: Ratio of warmup epochs (e.g., 0.2 for 20% warmup)
+            eta_min: Minimum learning rate for cosine annealing
+            last_epoch: The index of last epoch
+        """
+        self.total_epochs = total_epochs
+        self.warmup_epochs = int(total_epochs * warmup_ratio)
+        self.eta_min = eta_min
+        super().__init__(optimizer, last_epoch)
+
+    def get_lr(self):
+        if self.last_epoch < self.warmup_epochs:
+            # Warmup phase: linear increase from 0 to base_lr
+            return [
+                base_lr * (self.last_epoch + 1) / self.warmup_epochs
+                for base_lr in self.base_lrs
+            ]
+        else:
+            # Cosine annealing phase
+            progress = (self.last_epoch - self.warmup_epochs) / (
+                self.total_epochs - self.warmup_epochs
+            )
+            return [
+                self.eta_min
+                + (base_lr - self.eta_min) * (1 + math.cos(math.pi * progress)) / 2
+                for base_lr in self.base_lrs
+            ]
+
+    def state_dict(self):
+        return {
+            key: value for key, value in self.__dict__.items() if key != "optimizer"
+        }
+
+    def load_state_dict(self, state_dict):
+        self.__dict__.update(state_dict)
