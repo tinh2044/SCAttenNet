@@ -179,7 +179,7 @@ def main(args, cfg):
                 "Please specify the trained model: --resume /path/to/best_checkpoint.pth"
             )
 
-        dev_stats = evaluate_fn(
+        dev_results = evaluate_fn(
             args,
             dev_dataloader,
             model,
@@ -191,10 +191,11 @@ def main(args, cfg):
             log_dir=f"{log_dir}/eval/dev",
         )
         print(
-            f"Dev loss of the network on the {len(dev_dataloader)} test videos: {dev_stats['loss']:.3f}"
+            f"Dev loss of the network on the {len(dev_dataloader)} test videos: {dev_results['loss']:.3f}"
         )
+        print(f"* DEV wer {dev_results['wer']:.3f}")
 
-        test_stats = evaluate_fn(
+        test_results = evaluate_fn(
             args,
             test_dataloader,
             model,
@@ -206,22 +207,9 @@ def main(args, cfg):
             log_dir=f"{log_dir}/eval/test",
         )
         print(
-            f"Test loss of the network on the {len(test_dataloader)} test videos: {test_stats['loss']:.3f}"
+            f"Test loss of the network on the {len(test_dataloader)} test videos: {test_results['loss']:.3f}"
         )
-        train_stats = evaluate_fn(
-            args,
-            train_dataloader,
-            model,
-            epoch=0,
-            beam_size=5,
-            print_freq=args.print_freq,
-            results_path=f"{model_dir}/train_results.json",
-            tokenizer=gloss_tokenizer,
-            log_dir=f"{log_dir}/eval/train",
-        )
-        print(
-            f"Train loss of the network on the {len(train_dataloader)} test videos: {train_stats['loss']:.3f}"
-        )
+        print(f"* TEST wer {test_results['wer']:.3f}")
         return
 
     print(f"Training on {device}")

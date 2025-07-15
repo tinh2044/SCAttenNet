@@ -19,20 +19,6 @@ righthand_idx = [x + 21 for x in lefthand_idx]
 total_idx = body_idx + lefthand_idx + righthand_idx
 
 
-def accuracy(logits, labels):
-    preds = torch.argmax(logits, dim=1)
-    correct = (preds == labels).sum().item()
-    total = labels.size(0)
-    return correct / total
-
-
-def top_k_accuracy(logits, labels, k=5):
-    top_k_preds = torch.topk(logits, k, dim=1).indices
-    correct = (top_k_preds == labels.unsqueeze(1)).any(dim=1).sum().item()
-    total = labels.size(0)
-    return correct / total
-
-
 def save_checkpoints(model, optimizer, path_dir, epoch, name=None):
     if not os.path.exists(path_dir):
         print(f"Making directory {path_dir}")
@@ -73,79 +59,13 @@ def load_checkpoints(model, optimizer, path, resume=True):
         return 1
 
 
-def train_epoch(model, dataloader, optimizer, scheduler=None, epoch=0, epochs=0):
-    all_loss, all_acc, all_top_5_acc = 0.0, 0.0, 0.0
-    loop = tqdm(
-        enumerate(dataloader),
-        total=len(dataloader),
-        leave=True,
-        desc=f"Training epoch {epoch + 1}/{epochs}: ",
-    )
-    for i, data in loop:
-        labels = data["labels"]
-        optimizer.zero_grad()
-        loss, logits = model(**data)
-        loss.backward()
-        optimizer.step()
-        all_loss += loss.item()
-
-        acc = accuracy(logits, labels)
-        top_5_acc = top_k_accuracy(logits, labels, k=5)
-
-        all_acc += acc
-        all_top_5_acc += top_5_acc
-
-        loop.set_postfix_str(
-            f"Loss: {loss.item():.3f}, Acc: {acc:.3f}, Top 5 Acc: {top_5_acc:.3f}"
-        )
-
-    if scheduler:
-        scheduler.step(loss)
-
-    all_loss /= len(dataloader)
-    all_acc /= len(dataloader)
-    all_top_5_acc /= len(dataloader)
-
-    return all_loss, all_acc, all_top_5_acc
-
-
-def evaluate(model, dataloader, epoch=0, epochs=0):
-    all_loss, all_acc, all_top_5_acc = 0.0, 0.0, 0.0
-    loop = tqdm(
-        enumerate(dataloader),
-        total=len(dataloader),
-        leave=True,
-        desc=f"Evaluation epoch {epoch + 1}/{epochs}: ",
-    )
-
-    for i, data in loop:
-        labels = data["labels"]
-        loss, logits = model(**data)
-
-        all_loss += loss.item()
-        acc = accuracy(logits, labels)
-        top_5_acc = top_k_accuracy(logits, labels, k=5)
-
-        all_acc += acc
-        all_top_5_acc += top_5_acc
-
-        loop.set_postfix_str(
-            f"Loss: {loss.item():.3f}, Acc: {acc:.3f}, Top 5 Acc: {top_5_acc:.3f}"
-        )
-
-    all_loss /= len(dataloader)
-    all_acc /= len(dataloader)
-    all_top_5_acc /= len(dataloader)
-
-    return all_loss, all_acc, all_top_5_acc
-
-
 def count_model_parameters(model):
     total_params = sum(p.numel() for p in model.parameters())
     return total_params
 
 
 def ctc_decode(gloss_logits, beam_size, input_lengths):
+    gloss_logits = gloss_logits.permute(1, 0, 2)
     gloss_logits = gloss_logits.cpu().detach().numpy()
     tf_gloss_logits = np.concatenate(
         (gloss_logits[:, :, 1:], gloss_logits[:, :, 0, None]),

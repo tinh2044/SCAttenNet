@@ -2,6 +2,7 @@ import torch
 from torch import nn
 import math
 import numpy as np
+from torch.nn import functional as F
 
 
 class Dict(dict):
@@ -90,24 +91,21 @@ class STPositionalEncoding(nn.Module):
         return pos_emb
 
 
-class FeedForwardLayer(nn.Module):
-    def __init__(self, in_feat, out_feat, dropout):
-        super(FeedForwardLayer, self).__init__()
-        self.fc1 = nn.Conv2d(in_feat, out_feat, kernel_size=(1, 1))
-        self.act = nn.ReLU()
-        self.fc2 = nn.Conv2d(out_feat, in_feat, kernel_size=(1, 1))
-        self.batch_norm = nn.BatchNorm2d(in_feat)
+class FeedForward(nn.Module):
+    def __init__(self, in_dim, out_dim, dropout):
+        super(FeedForward, self).__init__()
+        self.fc1 = nn.Linear(in_dim, out_dim)
+        self.act = nn.GELU()
+        self.fc2 = nn.Linear(out_dim, in_dim)
 
         self.dropout = dropout
 
     def forward(self, x):
-        residual = x
-        x = self.fc1(x)
-        x = self.act(x)
+        x = self.act(self.fc1(x))
+        x = F.dropout(x, p=self.dropout, training=self.training)
         x = self.fc2(x)
-        x = self.batch_norm(x)
-        x = self.dropout(x)
-        return x + residual
+        x = F.dropout(x, p=self.dropout, training=self.training)
+        return x
 
 
 class CoordinateMapping(nn.Module):

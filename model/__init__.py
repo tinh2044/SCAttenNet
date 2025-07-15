@@ -1,7 +1,7 @@
 import torch
 from torch import nn
-from model.keypoint_module import SeparativeCoordinateAttention
-from model.feature_alignment import FeatureAlignment
+from model.keypoint_module import KeypointModule
+from model.alignment_module import AlignmentModule
 from model.fusion import CoordinatesFusion
 from loss import SeqKD
 
@@ -20,11 +20,11 @@ class RecognitionHead(nn.Module):
             cfg["residual_blocks"][-1], len(gloss_tokenizer)
         )
         self.fuse_coord_classifier = nn.Linear(
-            cfg["residual_blocks"][-1], len(gloss_tokenizer)
+            cfg["out_fusion_dim"], len(gloss_tokenizer)
         )
 
-        self.fuse_alignment_head = FeatureAlignment(
-            **cfg["fuse_alignment"], cls_num=len(gloss_tokenizer)
+        self.fuse_alignment_head = AlignmentModule(
+            **cfg["alignment_module"], cls_num=len(gloss_tokenizer)
         )
 
     def forward(
@@ -34,14 +34,9 @@ class RecognitionHead(nn.Module):
         fuse_output,
         body_output,
     ):
-        left_output = left_output.permute(2, 0, 1)
-        right_output = right_output.permute(2, 0, 1)
-        body_output = body_output.permute(2, 0, 1)
-        fuse_output = fuse_output.permute(2, 0, 1)
-
         left_logits = self.left_gloss_classifier(left_output)
         right_logits = self.right_gloss_classifier(right_output)
-        fuse_logits = self.fuse_alignment_head(fuse_output)
+        fuse_logits = self.fuse_alignment_head(fuse_output.permute(1, 0, 2))
         body_logits = self.body_gloss_classifier(body_output)
         fuse_coord_logits = self.fuse_coord_classifier(fuse_output)
         outputs = {
@@ -51,7 +46,6 @@ class RecognitionHead(nn.Module):
             "body_gloss_logits": body_logits,
             "fuse_coord_logits": fuse_coord_logits,
         }
-
         return outputs
 
 
@@ -66,17 +60,17 @@ class MSCA_Net(torch.nn.Module):
 
         self.self_distillation = cfg["self_distillation"]
 
-        self.body_encoder = SeparativeCoordinateAttention(
+        self.body_encoder = KeypointModule(
             cfg["body_idx"], num_frame=cfg["num_frame"], cfg=cfg
         )
-        self.left_encoder = SeparativeCoordinateAttention(
+        self.left_encoder = KeypointModule(
             cfg["left_idx"], num_frame=cfg["num_frame"], cfg=cfg
         )
-        self.right_encoder = SeparativeCoordinateAttention(
+        self.right_encoder = KeypointModule(
             cfg["right_idx"], num_frame=cfg["num_frame"], cfg=cfg
         )
         self.coordinates_fusion = CoordinatesFusion(
-            cfg["residual_blocks"][-1], cfg["residual_blocks"][-1], 0.2
+            cfg["in_fusion_dim"], cfg["out_fusion_dim"], 0.2
         )
         self.recognition_head = RecognitionHead(cfg, gloss_tokenizer)
 
@@ -95,21 +89,20 @@ class MSCA_Net(torch.nn.Module):
 
         body_embed = self.body_encoder(
             keypoints[:, :, self.cfg["body_idx"], :], mask
-        )  # (B, D, T/4)
+        )  # (B,T/4,D)
         left_embed = self.left_encoder(
             keypoints[:, :, self.cfg["left_idx"], :], mask
-        )  # (B, D, T/4)
+        )  # (B,T/4,D)
         right_embed = self.right_encoder(
             keypoints[:, :, self.cfg["right_idx"], :],
-            mask,  # (B, D, T/4)
+            mask,  # (B,T/4,D)
         )
         fuse_embed = self.coordinates_fusion(
             left_embed, right_embed, body_embed
-        )  # (B, 3D, T/4)
+        )  # (B,T/4, D)
         head_outputs = self.recognition_head(
             left_embed, right_embed, fuse_embed, body_embed
         )
-
         outputs = {**head_outputs, "input_lengths": src_input["valid_len_in"]}
         outputs["total_loss"] = 0
 
@@ -124,8 +117,8 @@ class MSCA_Net(torch.nn.Module):
             lengths=src_input["gloss_lengths"],
             logits=outputs["fuse_gloss_logits"],
             input_lengths=torch.full(
-                (outputs["fuse_gloss_logits"].shape[1],),
-                outputs["fuse_gloss_logits"].shape[0],
+                (outputs["fuse_gloss_logits"].shape[0],),
+                outputs["fuse_gloss_logits"].shape[1],
                 dtype=torch.long,
             ),
         )
@@ -134,8 +127,8 @@ class MSCA_Net(torch.nn.Module):
             lengths=src_input["gloss_lengths"],
             logits=outputs["fuse_coord_logits"],
             input_lengths=torch.full(
-                (outputs["fuse_coord_logits"].shape[1],),
-                outputs["fuse_coord_logits"].shape[0],
+                (outputs["fuse_coord_logits"].shape[0],),
+                outputs["fuse_coord_logits"].shape[1],
                 dtype=torch.long,
             ),
         )
@@ -166,28 +159,7 @@ class MSCA_Net(torch.nn.Module):
         return outputs
 
     def compute_loss(self, labels, lengths, logits, input_lengths):
-        batch_size = logits.shape[1]
-        time_steps = logits.shape[0]
-
-        if input_lengths.shape[0] != batch_size:
-            raise ValueError(
-                f"input_lengths size {input_lengths.shape[0]} doesn't match batch_size {batch_size}"
-            )
-        if lengths.shape[0] != batch_size:
-            raise ValueError(
-                f"target_lengths size {lengths.shape[0]} doesn't match batch_size {batch_size}"
-            )
-
-        input_lengths = input_lengths.to(dtype=torch.long)
-
-        input_lengths = torch.clamp(input_lengths, max=time_steps)
-
-        input_lengths = input_lengths.to(logits.device)
-        lengths = lengths.to(logits.device)
-        labels = labels.to(logits.device)
-
         try:
-            logits = logits.permute(1, 0, 2)
             logits = logits.log_softmax(dim=-1)
             logits = logits.permute(1, 0, 2)
 

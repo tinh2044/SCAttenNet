@@ -77,7 +77,7 @@ def evaluate_fn(
                 if "loss" in k and "gloss" not in k:
                     metric_logger.update(**{k: gls_logits})
                     continue
-                if "gloss_logits" not in k:
+                if "fuse_gloss_logits" not in k:
                     continue
                 logits_name = k.replace("gloss_logits", "")
 
