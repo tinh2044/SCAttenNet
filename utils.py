@@ -67,6 +67,7 @@ def count_model_parameters(model):
 def ctc_decode(gloss_logits, beam_size, input_lengths):
     gloss_logits = gloss_logits.permute(1, 0, 2)
     gloss_logits = gloss_logits.cpu().detach().numpy()
+    # print(gloss_logits.shape)
     tf_gloss_logits = np.concatenate(
         (gloss_logits[:, :, 1:], gloss_logits[:, :, 0, None]),
         axis=-1,

@@ -74,7 +74,7 @@ class MSCA_Net(torch.nn.Module):
         )
         self.recognition_head = RecognitionHead(cfg, gloss_tokenizer)
 
-        self.loss_fn = nn.CTCLoss(reduction="mean", zero_infinity=False, blank=0)
+        self.loss_fn = nn.CTCLoss(reduction="none", zero_infinity=False, blank=0)
         self.distillation_loss = SeqKD()
 
     def forward(self, src_input, **kwargs):
@@ -117,13 +117,13 @@ class MSCA_Net(torch.nn.Module):
 
         outputs["alignment_loss"] = self.compute_loss(
             labels=src_input["gloss_labels"],
-            lengths=src_input["gloss_lengths"],
+            tgt_lengths=src_input["gloss_lengths"],
             logits=outputs["alignment_gloss_logits"],
             input_lengths=outputs["input_lengths"],
         )
         outputs["fuse_coord_loss"] = self.compute_loss(
             labels=src_input["gloss_labels"],
-            lengths=src_input["gloss_lengths"],
+            tgt_lengths=src_input["gloss_lengths"],
             logits=outputs["fuse_coord_gloss_logits"],
             input_lengths=outputs["input_lengths"],
         )
@@ -163,17 +163,17 @@ class MSCA_Net(torch.nn.Module):
 
         return outputs
 
-    def compute_loss(self, labels, lengths, logits, input_lengths):
+    def compute_loss(self, labels, tgt_lengths, logits, input_lengths):
         try:
-            logits = logits.log_softmax(dim=-1)
             logits = logits.permute(1, 0, 2)
+            # logits = logits.log_softmax(dim=-1)
 
             loss = self.loss_fn(
-                log_probs=logits,
-                targets=labels,
-                input_lengths=input_lengths,
-                target_lengths=lengths,
-            )
+                logits.log_softmax(dim=-1),
+                labels.cpu().int(),
+                input_lengths.cpu().int(),
+                tgt_lengths.cpu().int(),
+            ).mean()
 
         except Exception as e:
             print(f"Error in CTC loss: {str(e)}")
