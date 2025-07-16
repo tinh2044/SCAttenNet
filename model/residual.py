@@ -134,7 +134,7 @@ if __name__ == "__main__":
     initial_dim = 256
 
     # Danh sách kích thước đầu ra của từng block
-    residual_blocks = [256, 256, 512, 512]
+    residual_blocks = [256, 256, 256]
 
     model = ResidualNetwork(residual_blocks)
     input_tensor = torch.randn(batch_size, T, initial_dim)

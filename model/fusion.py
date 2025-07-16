@@ -7,21 +7,24 @@ class CoordinatesFusion(nn.Module):
     def __init__(self, in_feat, out_feat, drop_rate=0.0):
         super(CoordinatesFusion, self).__init__()
         mid_feat = (in_feat + out_feat) // 2
-        self.left_se = nn.Sequential(
-            nn.Linear(in_feat, (in_feat + mid_feat) // 2),
-            nn.GELU(),
-            nn.Linear((in_feat + mid_feat) // 2, out_feat),
-        )
-        self.right_se = nn.Sequential(
-            nn.Linear(in_feat, (in_feat + mid_feat) // 2),
-            nn.GELU(),
-            nn.Linear((in_feat + mid_feat) // 2, out_feat),
-        )
-        self.body_se = nn.Sequential(
-            nn.Linear(in_feat, (in_feat + mid_feat) // 2),
-            nn.GELU(),
-            nn.Linear((in_feat + mid_feat) // 2, out_feat),
-        )
+        # self.left_se = nn.Sequential(
+        #     nn.Linear(in_feat, (in_feat + mid_feat) // 2),
+        #     nn.GELU(),
+        #     nn.Linear((in_feat + mid_feat) // 2, out_feat),
+        # )
+        # self.right_se = nn.Sequential(
+        #     nn.Linear(in_feat, (in_feat + mid_feat) // 2),
+        #     nn.GELU(),
+        #     nn.Linear((in_feat + mid_feat) // 2, out_feat),
+        # )
+        # self.body_se = nn.Sequential(
+        #     nn.Linear(in_feat, (in_feat + mid_feat) // 2),
+        #     nn.GELU(),
+        #     nn.Linear((in_feat + mid_feat) // 2, out_feat),
+        # )
+        self.left_se = nn.Linear(in_feat, out_feat)
+        self.right_se = nn.Linear(in_feat, out_feat)
+        self.body_se = nn.Linear(in_feat, out_feat)
         self.out_proj = nn.Linear(out_feat, out_feat)
         self.norm = nn.LayerNorm(out_feat)
 

@@ -135,6 +135,40 @@ def main(args, cfg):
 
     print(f"Number of parameters: {n_parameters}")
 
+    # Calculate FLOPs
+    # Calculate total number of joints (maximum index + 1)
+    all_joint_indices = (
+        cfg["model"]["body_idx"] + cfg["model"]["left_idx"] + cfg["model"]["right_idx"]
+    )
+    max_joint_index = max(all_joint_indices)
+
+    # Add joint_parts if they exist in data config
+    if "joint_parts" in cfg["data"]:
+        for part in cfg["data"]["joint_parts"]:
+            if isinstance(part, list):
+                max_joint_index = max(max_joint_index, max(part))
+
+    input_shape = {
+        "batch_size": args.batch_size,
+        "seq_len": cfg["data"]["max_len"],
+        "num_joints": max_joint_index + 1,  # +1 because indices are 0-based
+        "vocab_size": len(gloss_tokenizer),
+    }
+
+    print("Calculating FLOPs...")
+    model_info = utils.get_model_info(model, input_shape, device)
+
+    print("Model Information:")
+    print(f"  Total parameters: {model_info['total_params']:,}")
+    print(f"  Trainable parameters: {model_info['trainable_params']:,}")
+    print(f"  Non-trainable parameters: {model_info['non_trainable_params']:,}")
+
+    if "flops" in model_info:
+        print(f"  FLOPs: {model_info['flops_str']}")
+        print(f"  MACs: {model_info['macs_str']}")
+        print(f"  Parameters (from thop): {model_info['params_str']}")
+    print()
+
     if args.finetune:
         print(f"Finetuning from {args.finetune}")
         checkpoint = torch.load(args.finetune, map_location="cpu")

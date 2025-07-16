@@ -64,6 +64,103 @@ def count_model_parameters(model):
     return total_params
 
 
+def calculate_flops(model, input_shape, device="cpu"):
+    """
+    Calculate FLOPs for MSCA_Net model
+
+    Args:
+        model: MSCA_Net model
+        input_shape: Dictionary containing input shapes
+        device: Device to run calculation on
+
+    Returns:
+        Dictionary containing FLOPs and MACs information
+    """
+    try:
+        from thop import profile, clever_format
+        import torch
+
+        # Create dummy input data based on model input requirements
+        batch_size = input_shape.get("batch_size", 1)
+        seq_len = input_shape.get("seq_len", 100)
+        num_joints = input_shape.get("num_joints", 542)  # Total joints dimension
+        vocab_size = input_shape.get("vocab_size", 1000)
+
+        # Create dummy inputs
+        dummy_input = {
+            "keypoints": torch.randn(batch_size, seq_len, num_joints, 2).to(device),
+            "mask": torch.ones(batch_size, seq_len, dtype=torch.long).to(device),
+            "mask_head": torch.ones(batch_size, seq_len // 4, dtype=torch.long).to(
+                device
+            ),
+            "valid_len_in": torch.tensor(
+                [seq_len // 4] * batch_size, dtype=torch.long
+            ).to(device),
+            "gloss_labels": torch.randint(0, vocab_size, (batch_size, 20)).to(device),
+            "gloss_lengths": torch.tensor([20] * batch_size, dtype=torch.long).to(
+                device
+            ),
+            "gloss_input": ["dummy gloss"] * batch_size,
+            "name": ["dummy_name"] * batch_size,
+        }
+
+        # Calculate FLOPs
+        model.eval()
+        with torch.no_grad():
+            macs, params = profile(model, inputs=(dummy_input,), verbose=False)
+
+        # Format the results
+        macs_str, params_str = clever_format([macs, params], "%.3f")
+
+        flops_info = {
+            "flops": macs * 2,  # FLOPs = MACs * 2
+            "macs": macs,
+            "params": params,
+            "flops_str": f"{macs * 2 / 1e9:.3f}G",  # Convert to GFLOPs
+            "macs_str": macs_str,
+            "params_str": params_str,
+        }
+
+        return flops_info
+
+    except ImportError:
+        print("Warning: thop library not installed. Install with: pip install thop")
+        return None
+    except Exception as e:
+        print(f"Error calculating FLOPs: {str(e)}")
+        return None
+
+
+def get_model_info(model, input_shape, device="cpu"):
+    """
+    Get comprehensive model information including parameters and FLOPs
+
+    Args:
+        model: The model to analyze
+        input_shape: Dictionary containing input shapes
+        device: Device to run calculation on
+
+    Returns:
+        Dictionary containing model information
+    """
+    model_info = {}
+
+    # Count parameters
+    total_params = count_model_parameters(model)
+    trainable_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
+
+    model_info["total_params"] = total_params
+    model_info["trainable_params"] = trainable_params
+    model_info["non_trainable_params"] = total_params - trainable_params
+
+    # Calculate FLOPs
+    flops_info = calculate_flops(model, input_shape, device)
+    if flops_info:
+        model_info.update(flops_info)
+
+    return model_info
+
+
 def ctc_decode(gloss_logits, beam_size, input_lengths):
     gloss_logits = gloss_logits.permute(1, 0, 2)
     gloss_logits = gloss_logits.cpu().detach().numpy()
