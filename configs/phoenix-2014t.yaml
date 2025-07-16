@@ -212,7 +212,7 @@ model:
   dropout: 0.2
   attention_heads: 16
   ff_dim: 768
-  attn_layers: 4
+  attn_layers: 8
   num_frame: 180
   max_position_embeddings: 256
   residual_blocks: [256, 256, 512, 512]
@@ -221,7 +221,7 @@ model:
   decoder_attention_heads: 16
   decoder_ffn_dim: 768
   decoder_layerdrop: 0.2
-  decoder_layers: 4
+  decoder_layers: 8
   dropout: 0.2
   encoder_attention_heads: 16
   encoder_ffn_dim: 768
