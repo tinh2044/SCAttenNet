@@ -28,7 +28,7 @@ class KeypointModule(nn.Module):
         x_embed = self.sca(x_embed, y_embed, attention_mask)
 
         outputs, _ = self.residual(x_embed)
-        return x_embed
+        return outputs
 
 
 class CoordinateAttention(nn.Module):

@@ -11,9 +11,15 @@ class RecognitionHead(nn.Module):
     def __init__(self, cfg, gloss_tokenizer):
         super().__init__()
 
-        self.left_gloss_classifier = nn.Linear(cfg["d_model"], len(gloss_tokenizer))
-        self.right_gloss_classifier = nn.Linear(cfg["d_model"], len(gloss_tokenizer))
-        self.body_gloss_classifier = nn.Linear(cfg["d_model"], len(gloss_tokenizer))
+        self.left_gloss_classifier = nn.Linear(
+            cfg["residual_blocks"][-1], len(gloss_tokenizer)
+        )
+        self.right_gloss_classifier = nn.Linear(
+            cfg["residual_blocks"][-1], len(gloss_tokenizer)
+        )
+        self.body_gloss_classifier = nn.Linear(
+            cfg["residual_blocks"][-1], len(gloss_tokenizer)
+        )
         self.fuse_coord_classifier = nn.Linear(
             cfg["out_fusion_dim"], len(gloss_tokenizer)
         )
