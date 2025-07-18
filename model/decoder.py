@@ -1,6 +1,6 @@
 import torch
 import torch.nn as nn
-from .attention import CrossAttention, CausalSelfAttention
+from .attention import CrossAttention, SelfCausalAttention
 from .layers import LearningPositionEmbedding
 from .utils import create_attention_mask, create_causal_attention_mask
 
@@ -10,7 +10,7 @@ class DecoderLayer(nn.Module):
         super().__init__()
         self.d_model = config["d_model"]
 
-        self.self_attn = CausalSelfAttention(
+        self.self_attn = SelfCausalAttention(
             d_model=self.d_model,
             num_heads=config["decoder_attention_heads"],
             dropout=config["attention_dropout"],

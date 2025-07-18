@@ -100,7 +100,9 @@ def build_optimizer(config, model):
         raise ValueError("Unknown optimizer {}.".format(optimizer_name))
 
 
-def build_scheduler(config, optimizer, scheduler_mode="max", hidden_size=0):
+def build_scheduler(
+    config, optimizer, scheduler_mode="max", hidden_size=0, last_epoch=-1
+):
     scheduler_name = config["scheduler"].lower()
 
     if scheduler_name == "plateau":
@@ -121,6 +123,7 @@ def build_scheduler(config, optimizer, scheduler_mode="max", hidden_size=0):
                 optimizer=optimizer,
                 eta_min=config.get("eta_min", 0),
                 T_max=config.get("t_max", 20),
+                last_epoch=last_epoch,
             ),
             "epoch",
         )
@@ -134,6 +137,7 @@ def build_scheduler(config, optimizer, scheduler_mode="max", hidden_size=0):
                 total_epochs=total_epochs,
                 warmup_ratio=warmup_ratio,
                 eta_min=eta_min,
+                last_epoch=last_epoch,
             ),
             "epoch",
         )
@@ -143,20 +147,25 @@ def build_scheduler(config, optimizer, scheduler_mode="max", hidden_size=0):
                 optimizer=optimizer,
                 T_0=config.get("t_init", 10),
                 T_mult=config.get("t_mult", 2),
+                last_epoch=last_epoch,
             ),
             "step",
         )
     elif scheduler_name == "decaying":
         return (
             lr_scheduler.StepLR(
-                optimizer=optimizer, step_size=config.get("decaying_step_size", 1)
+                optimizer=optimizer,
+                step_size=config.get("decaying_step_size", 1),
+                last_epoch=last_epoch,
             ),
             "epoch",
         )
     elif scheduler_name == "exponential":
         return (
             lr_scheduler.ExponentialLR(
-                optimizer=optimizer, gamma=config.get("decrease_factor", 0.99)
+                optimizer=optimizer,
+                gamma=config.get("decrease_factor", 0.99),
+                last_epoch=last_epoch,
             ),
             "epoch",
         )
@@ -330,6 +339,7 @@ class WarmupCosineAnnealingScheduler(_LRScheduler):
         self.total_epochs = total_epochs
         self.warmup_epochs = int(total_epochs * warmup_ratio)
         self.eta_min = eta_min
+        self.warmup_ratio = warmup_ratio
         super().__init__(optimizer, last_epoch)
 
     def get_lr(self):
@@ -351,9 +361,20 @@ class WarmupCosineAnnealingScheduler(_LRScheduler):
             ]
 
     def state_dict(self):
+        """Returns the state of the scheduler as a :class:`dict`.
+
+        It contains an entry for every variable in self.__dict__ which
+        is not the optimizer.
+        """
         return {
             key: value for key, value in self.__dict__.items() if key != "optimizer"
         }
 
     def load_state_dict(self, state_dict):
+        """Loads the schedulers state.
+
+        Args:
+            state_dict (dict): scheduler state. Should be an object returned
+                from a call to :meth:`state_dict`.
+        """
         self.__dict__.update(state_dict)

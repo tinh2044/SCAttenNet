@@ -52,12 +52,12 @@ class RecognitionHead(nn.Module):
         body_logits = self.body_gloss_classifier(body_output)
         fuse_coord_logits = self.fuse_coord_classifier(fuse_output)
 
-        # Clamp logits to prevent extreme values
-        left_logits = torch.clamp(left_logits, min=-50, max=50)
-        right_logits = torch.clamp(right_logits, min=-50, max=50)
-        fuse_logits = torch.clamp(fuse_logits, min=-50, max=50)
-        body_logits = torch.clamp(body_logits, min=-50, max=50)
-        fuse_coord_logits = torch.clamp(fuse_coord_logits, min=-50, max=50)
+        # # Clamp logits to prevent extreme values
+        # left_logits = torch.clamp(left_logits, min=-50, max=50)
+        # right_logits = torch.clamp(right_logits, min=-50, max=50)
+        # fuse_logits = torch.clamp(fuse_logits, min=-50, max=50)
+        # body_logits = torch.clamp(body_logits, min=-50, max=50)
+        # fuse_coord_logits = torch.clamp(fuse_coord_logits, min=-50, max=50)
 
         outputs = {
             "alignment_gloss_logits": fuse_logits,
@@ -204,7 +204,7 @@ class MSCA_Net(torch.nn.Module):
             print(f"Target lengths: {src_input['gloss_lengths']}")
             raise ValueError("NaN or inf in fuse_coord_loss")
 
-        outputs["total_loss"] += outputs["fuse_coord_loss"]
+        outputs["total_loss"] += outputs["fuse_coord_loss"] + outputs["alignment_loss"]
 
         if self.self_distillation:
             for student, weight in self.cfg["distillation_weight"].items():
@@ -277,7 +277,7 @@ class MSCA_Net(torch.nn.Module):
             loss = loss[valid_loss_mask].mean()
 
             # Clamp final loss to prevent extreme values
-            loss = torch.clamp(loss, min=0, max=100)
+            # loss = torch.clamp(loss, min=0, max=100)
 
         except Exception as e:
             print(f"Error in CTC loss: {str(e)}")

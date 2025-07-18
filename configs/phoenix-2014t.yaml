@@ -206,17 +206,29 @@ training:
     weight_decay: 2.0e-05
 
 model:
+  activation_dropout: 0.0
   attention_dropout: 0.0
   d_model: 256
   dropout: 0.2
   attention_heads: 16
   ff_dim: 768
-  attn_layers: 4
+  attn_layers: 8
   num_frame: 180
   max_position_embeddings: 256
   residual_blocks: [256, 256, 512, 512]
   in_fusion_dim: 512
   out_fusion_dim: 1024
+  decoder_attention_heads: 16
+  decoder_ffn_dim: 768
+  decoder_layerdrop: 0.2
+  decoder_layers: 8
+  dropout: 0.2
+  encoder_attention_heads: 16
+  encoder_ffn_dim: 768
+  encoder_layerdrop: 0.2
+  encoder_layers: 4
+  num_frame: 180
+  max_position_embeddings: 256
   alignment_module:
     input_size: 1024
     hidden_size: 1024

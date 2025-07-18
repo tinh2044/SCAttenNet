@@ -177,37 +177,49 @@ def main(args, cfg):
         print("Unexpected keys: \n", "\n".join(ret.unexpected_keys))
 
     optimizer = build_optimizer(config=cfg["training"]["optimization"], model=model)
+
+    # Set initial_lr for optimizer (needed for scheduler resume)
+    for group in optimizer.param_groups:
+        if "initial_lr" not in group:
+            group["initial_lr"] = group["lr"]
+
     # Update config with total epochs for warmup scheduler
     cfg["training"]["optimization"]["total_epochs"] = args.epochs
-    scheduler, scheduler_type = build_scheduler(
-        config=cfg["training"]["optimization"], optimizer=optimizer
-    )
-    output_dir = Path(cfg["training"]["model_dir"])
 
+    # Initialize scheduler with correct last_epoch for resume
+    scheduler_last_epoch = -1
     if args.resume:
         print(f"Resume training from {args.resume}")
         checkpoint = torch.load(args.resume, map_location="cpu")
         if utils.check_state_dict(model, checkpoint["model"]):
-            ret = model.load_state_dict(checkpoint["model"], strict=True)
+            ret = model.load_state_dict(checkpoint["model"], strict=False)
         else:
             print("Model and state dict are different")
             raise ValueError("Model and state dict are different")
 
-        if (
-            not args.eval
-            and "optimizer" in checkpoint
-            and "scheduler" in checkpoint
-            and "epoch" in checkpoint
-        ):
-            print("Loading optimizer and scheduler")
-            optimizer.load_state_dict(checkpoint["optimizer"])
-            scheduler.load_state_dict(checkpoint["scheduler"])
-
-            print(f"New learning rate : {scheduler.get_last_lr()[0]}")
+        if "epoch" in checkpoint:
+            scheduler_last_epoch = checkpoint["epoch"]
         args.start_epoch = checkpoint["epoch"] + 1
-
         print("Missing keys: \n", "\n".join(ret.missing_keys))
         print("Unexpected keys: \n", "\n".join(ret.unexpected_keys))
+
+    # Create scheduler with correct last_epoch
+    scheduler, scheduler_type = build_scheduler(
+        config=cfg["training"]["optimization"],
+        optimizer=optimizer,
+        last_epoch=scheduler_last_epoch,
+    )
+
+    # Load optimizer and scheduler state if resuming
+    if args.resume:
+        if not args.eval and "optimizer" in checkpoint and "scheduler" in checkpoint:
+            print("Loading optimizer and scheduler")
+            optimizer.load_state_dict(checkpoint["optimizer"])
+            if hasattr(scheduler, "load_state_dict"):
+                scheduler.load_state_dict(checkpoint["scheduler"])
+            print(f"New learning rate : {scheduler.get_last_lr()[0]}")
+
+    output_dir = Path(cfg["training"]["model_dir"])
 
     if args.eval:
         if not args.resume:

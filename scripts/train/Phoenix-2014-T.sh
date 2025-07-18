@@ -1,10 +1,10 @@
 #!/bin/bash
 BATCH_SIZE=8
-EPOCHS=100
+EPOCHS=500
 FINETUNE=""
 DEVICE="cpu"
 SEED=0
-RESUME=""
+RESUME="./outputs/Phoenix-2014-T/best_checkpoint.pth"
 START_EPOCH=0
 EVAL_FLAG=""
 TEST_ON_LAST_EPOCH="False"
